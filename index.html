@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#3d4249">
+<title>Captura PQP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#3d4249; --navy-deep:#2b2f35; --navy-grad:linear-gradient(140deg,#4a5058 0%,#3d4249 55%,#2b2f35 100%);
+    --blue:#6b7280; --blue-soft:#eceef1; --bg:#f0f1f3; --surface:#fff;
+    --ink:#1f2328; --ink-soft:#5b6068; --muted:#9a9fa8; --line:#eff0f2; --line-strong:#dcdfe3;
+    --success:#18a957; --success-soft:#e4f7ec; --error:#e23b4e; --error-soft:#fdecee; --warn:#d98a13; --warn-soft:#fdf3e2;
+    --r-xl:26px; --r-lg:20px; --r-md:14px; --r-sm:11px;
+    --sh-card:0 16px 40px -18px rgba(61,66,73,.28); --sh-soft:0 6px 18px -10px rgba(61,66,73,.4); --sh-pop:0 18px 44px -10px rgba(43,47,53,.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:120px}
+  h1,h2,h3{font-family:'Poppins',sans-serif}
+  .icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+  svg{pointer-events:none} /* el clic siempre llega al botón, no al icono */
+  button,.btn,.nav-icon,.fab,.petal,.opt label,.upload,.foto-ingreso,.ayuda-item{touch-action:manipulation}
+  .icon-lg{width:22px;height:22px}.icon-sm{width:15px;height:15px}.icon-xl{width:30px;height:30px}
+
+  /* TOPBAR */
+  .topbar{background:var(--navy-grad);color:#fff;padding:20px 20px 26px;border-radius:0 0 28px 28px;position:sticky;top:0;z-index:40;overflow:hidden}
+  .topbar::before{content:'';position:absolute;top:-50px;right:-30px;width:150px;height:150px;background:rgba(255,255,255,.07);border-radius:50%}
+  .topbar-row{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+  .topbar-logo{width:40px;height:40px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center}
+  .topbar-brand{flex:1}.topbar-brand b{font-family:'Poppins';font-weight:600;font-size:16px;display:block}.topbar-brand span{font-size:12px;opacity:.8}
+  .step-pill{font-family:'Poppins';font-size:12px;font-weight:600;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);padding:6px 12px;border-radius:20px;white-space:nowrap}
+  .greet{max-width:720px;margin:16px auto 0;position:relative;z-index:1}
+  .greet h1{font-size:20px;font-weight:700}.greet p{font-size:12.5px;opacity:.82;margin-top:2px}
+  .progress{max-width:720px;margin:14px auto 0;display:flex;gap:5px;position:relative;z-index:1}
+  .progress span{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.22);transition:background .3s}
+  .progress span.done{background:#7ef0a8}.progress span.cur{background:#fff}
+
+  /* STAGE */
+  .stage{max-width:720px;margin:-14px auto 0;padding:0 16px;position:relative;z-index:2}
+  .mod{display:none;animation:fadeIn .32s ease}.mod.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .card{background:var(--surface);border-radius:var(--r-xl);padding:22px;box-shadow:var(--sh-card)}
+  .card-head{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+  .card-chip{width:46px;height:46px;background:var(--blue-soft);color:var(--navy);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .card-head-text{flex:1;min-width:0}.card-title{font-family:'Poppins';font-size:16px;font-weight:600}.card-sub{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .saved-badge{display:none;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--success);background:var(--success-soft);padding:5px 9px;border-radius:20px}
+  .saved-badge.on{display:inline-flex}
+
+  /* FIELDS */
+  .field{margin-bottom:15px}.field:last-child{margin-bottom:0}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:7px}
+  .label-req::after{content:'*';color:var(--error);margin-left:3px}.label-hint{font-weight:400;color:var(--muted);margin-left:4px}
+  .input,.select,.textarea{width:100%;padding:13px 15px;border:1.5px solid var(--line-strong);border-radius:var(--r-md);background:#fafafa;font-family:inherit;font-size:15px;color:var(--ink);transition:all .15s ease;min-height:48px}
+  .input::placeholder,.textarea::placeholder{color:var(--muted)}
+  .input:hover,.select:hover,.textarea:hover{border-color:#c3c6cb}
+  .input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(107,114,128,.12)}
+  .input:disabled,.select:disabled{background:#f1f2f4;cursor:not-allowed;color:var(--muted)}
+  .select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233d4249' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+  .textarea{min-height:82px;resize:vertical}
+
+  /* OPTIONS */
+  .opt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px}.opt-grid-2{grid-template-columns:repeat(2,1fr)}
+  .opt{position:relative}.opt input{position:absolute;opacity:0;pointer-events:none}
+  .opt label{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px;background:#fafafa;border:1.5px solid var(--line-strong);border-radius:var(--r-md);cursor:pointer;font-size:14px;font-weight:600;color:var(--ink-soft);transition:all .15s ease;text-align:center;min-height:50px}
+  .opt label:hover{border-color:var(--blue);color:var(--navy)}
+  .opt input:checked+label{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:var(--sh-soft)}
+  .opt .chk{display:none}.opt input:checked+label .chk{display:inline-flex}
+
+  /* BUTTONS */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border:1.5px solid transparent;border-radius:var(--r-md);font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;transition:all .15s ease;min-height:48px;white-space:nowrap}
+  .btn-primary{background:var(--navy);color:#fff;box-shadow:var(--sh-soft)}.btn-primary:hover:not(:disabled){background:var(--navy-deep)}
+  .btn-soft{background:var(--blue-soft);color:var(--navy)}.btn-soft:hover{background:#e0e2e6}
+  .btn-outline{background:#fff;color:var(--ink);border-color:var(--line-strong)}
+  .btn-success{background:var(--success);color:#fff}.btn-success:hover{background:#13954b}
+  .btn-danger{background:transparent;color:var(--error);border-color:var(--line-strong)}.btn-danger:hover{background:var(--error-soft);border-color:var(--error)}
+  .btn-block{width:100%}.btn-sm{padding:8px 13px;font-size:13px;min-height:38px}.btn-icon{padding:8px;min-height:38px;width:38px}
+  .save-row{margin-top:20px;padding-top:18px;border-top:1px dashed var(--line-strong)}
+
+  /* ALERTS */
+  .alert{display:flex;align-items:flex-start;gap:11px;padding:14px;border-radius:var(--r-md);font-size:13px;margin-bottom:16px;border:1.5px solid}
+  .alert-warn{background:var(--warn-soft);color:var(--warn);border-color:#f3dcae}.alert-error{background:var(--error-soft);color:var(--error);border-color:#f6c7cd}
+  .alert-actions{margin-top:9px;display:flex;gap:8px}
+  .shake{animation:shake .4s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  /* GPS LOCATION */
+  .loc-box{border:1.5px solid var(--line-strong);border-radius:var(--r-md);padding:15px;background:#fafafa;transition:.2s}
+  .loc-box.ok{border-color:var(--success);background:var(--success-soft)}
+  .loc-top{display:flex;align-items:center;gap:12px}
+  .loc-ic{width:42px;height:42px;border-radius:50%;background:var(--blue-soft);color:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .loc-box.ok .loc-ic{background:#fff;color:var(--success)}
+  .loc-info{flex:1;min-width:0}.loc-info b{font-size:14px;font-family:'Poppins'}.loc-info span{display:block;font-size:12px;color:var(--ink-soft);margin-top:1px}
+  .loc-coords{margin-top:12px;font-size:12.5px;color:var(--ink-soft);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .loc-coords a{color:var(--navy);font-weight:600;text-decoration:none}
+
+  /* SKU */
+  .sku-wrap{position:relative}
+  .sku-dd{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border:1.5px solid var(--line-strong);border-radius:var(--r-md);max-height:240px;overflow-y:auto;z-index:100;box-shadow:var(--sh-pop);display:none}
+  .sku-dd.show{display:block}
+  .sku-item{padding:12px 15px;cursor:pointer;font-size:14px;border-bottom:1px solid var(--line)}.sku-item:last-child{border:none}.sku-item:hover{background:var(--blue-soft);color:var(--navy)}
+  .sku-empty{padding:15px;text-align:center;color:var(--muted);font-size:13px}
+
+  /* LIST ITEMS (pedido/agotados/fechas) */
+  .item{background:#fafafa;border:1.5px solid var(--line);border-radius:var(--r-lg);padding:15px;margin-bottom:11px}
+  .item-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+  .item-title{font-family:'Poppins';font-size:13px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px}
+  .item-sub{font-size:13px;color:var(--ink-soft);text-align:right;margin-top:9px}.item-sub strong{color:var(--ink);font-weight:700}
+  .empty-hint{text-align:center;color:var(--muted);font-size:13px;padding:6px 0 14px}
+
+  /* TOTAL */
+  .total-card{background:var(--navy-grad);color:#fff;border-radius:var(--r-lg);padding:18px 20px;margin-top:14px;position:relative;overflow:hidden;box-shadow:var(--sh-soft)}
+  .total-card::after{content:'';position:absolute;top:-30px;right:-20px;width:110px;height:110px;background:rgba(255,255,255,.08);border-radius:50%}
+  .total-row{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+  .total-row+.total-row{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16)}
+  .total-lbl{font-size:13px;opacity:.85}.total-val{font-family:'Poppins';font-size:17px;font-weight:600}.total-row.big .total-val{font-size:24px;font-weight:700}
+
+  /* UPLOAD */
+  .upload{position:relative;border:2px dashed var(--line-strong);border-radius:var(--r-lg);padding:24px 16px;text-align:center;cursor:pointer;transition:all .15s;background:#fafafa}
+  .upload:hover{border-color:var(--blue);background:var(--blue-soft)}
+  .upload.has{padding:12px;border-style:solid;border-color:var(--success);background:var(--success-soft)}
+  .upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .upload-ic{width:44px;height:44px;background:var(--blue-soft);color:var(--navy);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px}
+  .upload-t{font-size:13.5px;font-weight:600}.upload-h{font-size:12px;color:var(--muted);margin-top:2px}
+  .preview-img{max-width:100%;max-height:200px;border-radius:var(--r-md);display:block;margin:0 auto}
+  .preview-act{display:flex;gap:8px;margin-top:11px;justify-content:center}
+
+  /* FOTOS MULTIPLE (3 antes + 3 después) */
+  .fotos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+  .upload.mini{padding:14px 10px}
+  .upload.mini .upload-ic{width:36px;height:36px;margin-bottom:6px}
+  .upload.mini .upload-t{font-size:12.5px}
+  .upload.mini .upload-h{font-size:10.5px;line-height:1.3}
+  .upload.mini .preview-img{max-height:110px}
+  .upload.mini .preview-act{margin-top:6px;gap:5px;flex-wrap:wrap}
+  .upload.mini .preview-act .btn{padding:5px 8px;font-size:11px;min-height:28px;gap:4px}
+  .upload.mini .preview-act .btn .icon{width:12px;height:12px}
+  .fotos-titulo{display:flex;align-items:center;gap:8px;font-family:'Poppins';font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+  .fotos-titulo .fotos-count{margin-left:auto;font-family:'Inter';font-weight:500;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0}
+  .fotos-titulo .fotos-count.ok{color:var(--success)}
+  @media(max-width:520px){.fotos-grid{grid-template-columns:1fr 1fr}}
+
+  /* SUMMARY */
+  .sum-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+  .sum-cell{background:#fafafa;border:1.5px solid var(--line);border-radius:var(--r-md);padding:13px}
+  .sum-cell .k{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+  .sum-cell .v{font-family:'Poppins';font-size:15px;font-weight:600;margin-top:3px;word-break:break-word}
+  .mod-state{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1.5px solid var(--line);border-radius:var(--r-md);margin-bottom:8px}
+  .mod-state .ms-ic{width:32px;height:32px;border-radius:9px;background:var(--blue-soft);color:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .mod-state .ms-name{flex:1;font-weight:600;font-size:14px}
+  .ms-tag{font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px}
+  .ms-tag.ok{background:var(--success-soft);color:var(--success)}.ms-tag.no{background:#f1f2f4;color:var(--muted)}
+
+  /* BOTTOM NAV + FLOWER */
+  .bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#fff;border-top:1px solid var(--line);padding:12px 18px;padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .nav-side{flex:1;display:flex}.nav-side.right{justify-content:flex-end}
+  .nav-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 16px;border-radius:var(--r-md);border:1.5px solid var(--line-strong);background:#fff;color:var(--ink);font-family:'Poppins';font-weight:600;font-size:13.5px;cursor:pointer;min-height:46px;transition:all .15s}
+  .nav-btn:hover{border-color:var(--muted)}.nav-btn[hidden]{visibility:hidden}
+  .fab-slot{position:relative;width:64px;flex-shrink:0}
+  .fab{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:62px;height:62px;border-radius:50%;border:4px solid var(--bg);background:var(--navy-grad);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px -6px rgba(61,66,73,.6);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+  .fab:hover{transform:translateX(-50%) scale(1.05)}
+  .fab .fab-ic{transition:transform .35s ease}.fab.spin .fab-ic{transform:rotate(135deg)}
+
+  .flower-bd{position:fixed;inset:0;background:rgba(31,35,40,.55);opacity:0;pointer-events:none;transition:opacity .25s;z-index:58}
+  .flower-bd.open{opacity:1;pointer-events:auto}
+  .flower{position:fixed;left:50%;bottom:80px;width:0;height:0;z-index:62}
+  /* PÉTALOS: solo icono, sin fondo */
+  .petal{position:absolute;left:0;bottom:0;width:50px;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;transform:translate(-50%,0) scale(.3);opacity:0;pointer-events:none;transition:transform .36s cubic-bezier(.34,1.56,.64,1),opacity .25s}
+  .flower.open .petal{transform:translate(calc(-50% + var(--x)),var(--y)) scale(1);opacity:1;pointer-events:auto}
+  .flower.open .petal:nth-child(1){transition-delay:.02s}.flower.open .petal:nth-child(2){transition-delay:.04s}.flower.open .petal:nth-child(3){transition-delay:.06s}.flower.open .petal:nth-child(4){transition-delay:.08s}.flower.open .petal:nth-child(5){transition-delay:.10s}.flower.open .petal:nth-child(6){transition-delay:.12s}.flower.open .petal:nth-child(7){transition-delay:.14s}.flower.open .petal:nth-child(8){transition-delay:.16s}.flower.open .petal:nth-child(9){transition-delay:.18s}.flower.open .petal:nth-child(10){transition-delay:.20s}.flower.open .petal:nth-child(11){transition-delay:.22s}.flower.open .petal:nth-child(12){transition-delay:.24s}
+  .petal-ic{color:#fff;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));transition:all .15s ease}
+  .petal-ic svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .petal:hover .petal-ic{transform:translateY(-3px);color:#d4d6da}
+  .petal.active .petal-ic{color:#b5b9bf}
+  .petal.saved .petal-ic{color:#7ef0a8}
+  .petal.locked{opacity:.35;pointer-events:none}
+  .petal-lbl{font-size:9px;color:#fff;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,.55);letter-spacing:.2px;text-align:center;line-height:1.1}
+
+  /* TOAST */
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:var(--r-md);font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:9px;box-shadow:var(--sh-pop);opacity:0;pointer-events:none;transition:all .3s;z-index:9998}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast .icon{color:#7ef0a8}
+
+  /* OVERLAYS */
+  .overlay{position:fixed;inset:0;background:rgba(31,35,40,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}.overlay.show{display:flex}
+  .modal{background:#fff;border-radius:var(--r-xl);padding:30px 26px;max-width:380px;width:100%;text-align:center;box-shadow:var(--sh-pop)}
+  .spinner{width:40px;height:40px;border:3.5px solid var(--blue-soft);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 16px}@keyframes spin{to{transform:rotate(360deg)}}
+  .modal-msg{font-size:14px;color:var(--ink-soft);font-weight:500}
+  .ok-ic{width:68px;height:68px;background:var(--success-soft);color:var(--success);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .ok-title{font-family:'Poppins';font-size:19px;font-weight:700;margin-bottom:6px}.ok-sub{font-size:14px;color:var(--ink-soft);margin-bottom:20px}
+  .ok-info{background:var(--bg);border-radius:var(--r-md);padding:12px 14px;margin-bottom:20px;font-size:12px;color:var(--ink-soft);text-align:left;word-break:break-all;white-space:pre-line}
+  @media(max-width:480px){.field-row{grid-template-columns:1fr}.card{padding:18px}.sum-grid{grid-template-columns:1fr}}
+
+  /* ===== PORTADA / BIENVENIDA ===== */
+  .portada{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;overflow:hidden;background:#80858d;transition:transform .6s cubic-bezier(.7,0,.25,1),opacity .55s ease}
+  .portada.hide{transform:translateY(-101%);opacity:0;pointer-events:none}
+  .portada-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+  .portada-content{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;padding:max(38px,env(safe-area-inset-top)) 26px max(30px,env(safe-area-inset-bottom));max-width:460px;width:100%;margin:0 auto}
+  .portada-brand{display:inline-flex;align-items:center;gap:8px;color:#fff;font-family:'Poppins';font-weight:600;font-size:12px;letter-spacing:2px;opacity:.92;text-transform:uppercase}
+  .portada-hero{margin-top:30px}
+  .portada-hero h1{color:#fff;font-size:38px;font-weight:700;line-height:1.04;text-shadow:0 2px 20px rgba(0,0,0,.25)}
+  .portada-hero p{color:rgba(255,255,255,.9);font-size:15px;margin-top:9px;max-width:260px;text-shadow:0 1px 10px rgba(0,0,0,.2)}
+  .portada-form{margin-top:auto}
+  .portada-err{display:none;color:#fff;background:rgba(226,59,78,.9);border-radius:13px;padding:11px 15px;font-size:13px;margin-bottom:13px;text-align:center;font-weight:500}
+  .pinput{position:relative;margin-bottom:13px}
+  .pinput .pic{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.85);display:flex}
+  .pinput input{width:100%;padding:17px 18px 17px 50px;border-radius:30px;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font-family:inherit;font-size:15px;transition:.2s}
+  .pinput input::placeholder{color:rgba(255,255,255,.72)}
+  .pinput input:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.26);box-shadow:0 0 0 4px rgba(255,255,255,.14)}
+  .btn-portada{width:100%;margin-top:6px;padding:17px;border:none;border-radius:30px;background:#fff;color:#3d4249;font-family:'Poppins';font-weight:700;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 16px 34px -12px rgba(0,0,0,.55);transition:transform .2s,box-shadow .2s}
+  .btn-portada:hover{transform:translateY(-2px);box-shadow:0 20px 40px -12px rgba(0,0,0,.6)}
+  .btn-portada:active{transform:translateY(0)}
+  .portada-foot{margin-top:18px;text-align:center;color:rgba(255,255,255,.82);font-size:12px}
+  .bird{animation:fly 7s ease-in-out infinite}
+  @keyframes fly{0%,100%{transform:translate(0,0)}50%{transform:translate(12px,-7px)}}
+
+  /* Chip mercaderista en módulo Inicio */
+  .merc-chip{display:flex;align-items:center;gap:12px;padding:13px;border:1.5px solid var(--line-strong);border-radius:var(--r-md);background:var(--blue-soft);margin-bottom:16px}
+  .merc-ava{width:44px;height:44px;border-radius:50%;background:var(--navy-grad);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .merc-info{flex:1;min-width:0}.merc-info b{font-family:'Poppins';font-size:14.5px;display:block;color:var(--ink)}.merc-info span{font-size:12.5px;color:var(--ink-soft)}
+
+  /* ===== AVATAR BURBUJA (topbar) ===== */
+  .avatar-bubble{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.55);overflow:hidden;flex-shrink:0;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:.15s}
+  .avatar-bubble:hover{border-color:#fff}
+  .avatar-bubble img{width:100%;height:100%;object-fit:cover;display:block}
+  .progress-wrap{max-width:720px;margin:14px auto 0;position:relative;z-index:1}
+  .progress-wrap .step-pill{display:inline-block;margin-bottom:9px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22)}
+  .progress-wrap .progress{margin-top:0}
+
+  /* ===== FOTO DE INGRESO (portada) — solo se sube al backend, nunca se usa como avatar ===== */
+  .foto-ingreso{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:24px;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.16);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;cursor:pointer;margin-bottom:13px;transition:.2s}
+  .foto-ingreso:hover{background:rgba(255,255,255,.25)}
+  .foto-ingreso.has{border-color:#7ef0a8}
+  .fi-ic{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .fi-txt b{font-size:14px;font-weight:600;display:block}.fi-txt span{font-size:11.5px;opacity:.82}
+
+  /* ===== BOTONES LATERALES ===== */
+  .nav-icon{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--line-strong);background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+  .nav-icon:hover{background:var(--blue-soft);border-color:var(--blue)}
+  .nav-icon img{width:100%;height:100%;object-fit:cover}
+
+  /* ===== MENÚ AYUDAS (expandible) ===== */
+  .ayudas-bd{position:fixed;inset:0;background:rgba(31,35,40,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s;z-index:58}
+  .ayudas-bd.open{opacity:1;pointer-events:auto}
+  .ayudas{position:fixed;right:16px;bottom:86px;z-index:62;display:flex;flex-direction:column;gap:12px;align-items:flex-end;pointer-events:none} /* el contenedor nunca bloquea toques; solo sus items al abrir */
+  .ayuda-item{display:flex;align-items:center;gap:11px;background:#fff;color:var(--ink);padding:11px 16px 11px 12px;border-radius:30px;text-decoration:none;font-family:'Poppins';font-weight:600;font-size:14px;box-shadow:var(--sh-pop);transform:translateY(18px) scale(.85);opacity:0;pointer-events:none;transition:transform .32s cubic-bezier(.34,1.56,.64,1),opacity .22s}
+  .ayudas.open .ayuda-item{transform:none;opacity:1;pointer-events:auto}
+  .ayudas.open .ayuda-item:nth-child(1){transition-delay:.16s}.ayudas.open .ayuda-item:nth-child(2){transition-delay:.09s}.ayudas.open .ayuda-item:nth-child(3){transition-delay:.02s}
+  .ayuda-ic{width:38px;height:38px;border-radius:50%;background:var(--blue-soft);color:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+  /* ===== MODAL PERSONA / RESUMEN DETALLE ===== */
+  .modal.left{text-align:left;max-width:400px}
+  .modal-h{font-family:'Poppins';font-size:18px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:9px}
+  .modal-p{font-size:13px;color:var(--ink-soft);margin-bottom:18px}
+  .modal-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:none;background:var(--bg);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .modal{position:relative}
+  .res-sec{margin-bottom:16px}
+  .res-sec-h{display:flex;align-items:center;gap:8px;font-family:'Poppins';font-size:13px;font-weight:600;color:var(--navy);margin-bottom:9px}
+  .res-line{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)}
+  .res-line:last-child{border:none}.res-line .rk{color:var(--ink-soft)}.res-line .rv{font-weight:600;text-align:right;word-break:break-word}
+  .res-mini{font-size:12.5px;color:var(--ink-soft);padding:5px 0}
+  .res-mini b{color:var(--ink)}
+
+  /* ===== FOTO DE PERFIL (panel persona) ===== */
+  .persona-foto{display:block;width:96px;height:96px;border-radius:50%;margin:0 auto 6px;position:relative;cursor:pointer}
+  .persona-foto-img{width:96px;height:96px;border-radius:50%;object-fit:cover;display:none;border:3px solid var(--blue-soft)}
+  .persona-foto-ph{width:96px;height:96px;border-radius:50%;background:var(--navy-grad);color:#fff;display:flex;align-items:center;justify-content:center}
+  .persona-foto-edit{position:absolute;right:2px;bottom:2px;width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;border:3px solid #fff}
+  .persona-foto-hint{text-align:center;font-size:12px;color:var(--muted);margin:0 0 16px}
+
+  /* ===== AYUDAS dentro del panel persona ===== */
+  .ayudas-sec{margin-top:20px;padding-top:18px;border-top:1px dashed var(--line-strong)}
+  .ayudas-titulo{display:flex;align-items:center;gap:8px;font-family:'Poppins';font-size:13px;font-weight:600;color:var(--navy);margin-bottom:11px}
+  .ayuda-link{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--line-strong);border-radius:var(--r-md);background:#fafafa;text-decoration:none;color:var(--ink);font-weight:600;font-size:14px;margin-bottom:9px;transition:.15s}
+  .ayuda-link:hover{border-color:var(--blue);background:var(--blue-soft)}
+  .ayuda-link .ayuda-ic{width:38px;height:38px;border-radius:50%;background:var(--blue-soft);color:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ayuda-link .ayuda-go{margin-left:auto;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-nav" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+  <symbol id="i-xcircle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-package" viewBox="0 0 24 24"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></symbol>
+  <symbol id="i-chevL" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></symbol>
+  <symbol id="i-chevR" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2.2"/><line x1="14" y1="10" x2="18" y2="10"/><line x1="14" y1="14" x2="18" y2="14"/></symbol>
+  <symbol id="i-arrowr" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+  <symbol id="i-slides" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+</svg>
+
+<!-- PORTADA / BIENVENIDA -->
+<div class="portada" id="portada">
+  <svg class="portada-bg" viewBox="0 0 390 844" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#e3e5e8"/><stop offset=".4" stop-color="#b4b8be"/><stop offset="1" stop-color="#80858d"/>
+      </linearGradient>
+      <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3a8af"/><stop offset="1" stop-color="#8d929a"/></linearGradient>
+      <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#757a82"/><stop offset="1" stop-color="#656a72"/></linearGradient>
+      <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#565b63"/><stop offset="1" stop-color="#464b53"/></linearGradient>
+      <linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3e45"/><stop offset="1" stop-color="#2a2d33"/></linearGradient>
+    </defs>
+    <rect width="390" height="844" fill="url(#sky)"/>
+    <circle cx="298" cy="158" r="58" fill="#f2f3f4" opacity=".30"/>
+    <circle cx="298" cy="158" r="38" fill="#fafafa" opacity=".40"/>
+    <g fill="none" stroke="#4a4f56" stroke-width="2" stroke-linecap="round" opacity=".5">
+      <path class="bird" d="M58 122 l11 -7 l11 7"/>
+      <path class="bird" d="M96 142 l8 -5 l8 5" style="animation-delay:1.2s"/>
+      <path class="bird" d="M124 110 l7 -5 l7 5" style="animation-delay:2.4s"/>
+    </g>
+    <!-- montañas lejanas -->
+    <path fill="url(#m1)" d="M0 520 L70 432 L150 508 L232 420 L312 500 L390 442 L390 560 L0 560 Z"/>
+    <rect x="0" y="540" width="390" height="44" fill="#ffffff" opacity=".10"/>
+    <!-- montañas medias -->
+    <path fill="url(#m2)" d="M0 602 L92 500 L182 590 L262 510 L342 580 L390 540 L390 668 L0 668 Z"/>
+    <rect x="0" y="632" width="390" height="44" fill="#ffffff" opacity=".08"/>
+    <!-- montañas cercanas -->
+    <path fill="url(#m3)" d="M0 694 L82 600 L172 680 L252 612 L332 676 L390 632 L390 768 L0 768 Z"/>
+    <!-- bosque base -->
+    <path fill="url(#fg)" d="M0 770 C60 750 120 782 182 763 C244 746 300 780 390 758 L390 844 L0 844 Z"/>
+    <!-- abetos silueta -->
+    <g fill="#22252a">
+      <path d="M28 752 L16 802 L40 802 Z"/><path d="M28 740 L18 770 L38 770 Z"/>
+      <path d="M70 768 L60 806 L80 806 Z"/>
+      <path d="M120 758 L106 806 L134 806 Z"/><path d="M120 746 L109 776 L131 776 Z"/>
+      <path d="M180 772 L170 808 L190 808 Z"/>
+      <path d="M240 760 L226 806 L254 806 Z"/><path d="M240 748 L229 778 L251 778 Z"/>
+      <path d="M300 770 L290 806 L310 806 Z"/>
+      <path d="M348 758 L334 806 L362 806 Z"/><path d="M348 746 L337 776 L359 776 Z"/>
+    </g>
+  </svg>
+  <div class="portada-content">
+    <div class="portada-brand"><svg class="icon icon-sm"><use href="#i-clipboard"/></svg> Captura PQP</div>
+    <div class="portada-hero">
+      <h1>Comencemos,</h1>
+      <p>Registra tu jornada en campo, paso a paso.</p>
+    </div>
+    <div class="portada-form" id="portadaForm">
+      <div class="portada-err" id="portadaErr">Completa tu nombre, documento y selfie.</div>
+      <div class="pinput"><span class="pic"><svg class="icon"><use href="#i-user"/></svg></span><input type="text" id="nombreMercaderista" placeholder="Nombre completo" autocomplete="name"></div>
+      <div class="pinput"><span class="pic"><svg class="icon"><use href="#i-id"/></svg></span><input type="tel" id="cedulaMercaderista" placeholder="Documento / Cédula" inputmode="numeric"></div>
+      <div class="pinput"><span class="pic"><svg class="icon"><use href="#i-phone"/></svg></span><input type="tel" id="telefono" placeholder="Teléfono" inputmode="tel"></div>
+      <label class="foto-ingreso" id="fotoIngresoBox">
+        <input type="file" id="fileIngreso" accept="image/*" capture="user" style="display:none">
+        <span class="fi-ic" id="fiIcon"><svg class="icon icon-lg"><use href="#i-camera"/></svg></span>
+        <span class="fi-txt"><b id="fiTitle">Tu selfie</b><span id="fiSub">Toca para tomar la foto (cámara frontal)</span></span>
+      </label>
+      <button class="btn-portada" onclick="comenzar()">Comenzar <svg class="icon"><use href="#i-arrowr"/></svg></button>
+      <div class="portada-foot"><a href="#" onclick="event.preventDefault();abrirRecuperarSesion();" style="color:#fff;text-decoration:underline;font-weight:600">¿Ya tienes una gestión en curso? Recuperar sesión</a></div>
+      <div class="portada-foot">Una herramienta de <b style="font-weight:700;letter-spacing:.5px">SYNAPTIC</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-row">
+    <div class="topbar-logo"><svg class="icon icon-lg"><use href="#i-clipboard"/></svg></div>
+    <div class="topbar-brand"><b>Captura PQP</b><span>Gestión comercial en campo</span></div>
+    <div class="avatar-bubble" id="avatarBubble" onclick="abrirPersona()" title="Mi información">
+      <svg class="icon icon-lg"><use href="#i-user"/></svg>
+    </div>
+  </div>
+  <div class="greet"><h1 id="heroGreet">Hola, mercaderista</h1><p id="heroDate"></p></div>
+  <div class="progress-wrap">
+    <span class="step-pill" id="stepPill">Inicio</span>
+    <div class="progress" id="progress"></div>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+
+  <!-- INICIO -->
+  <section class="mod active" data-mod="inicio">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-pin"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Inicio de gestión</div><div class="card-sub">Mercaderista, punto de venta y ubicación</div></div>
+        <span class="saved-badge" id="badge-inicio"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div id="alertParam" class="alert alert-error" style="display:none">
+        <svg class="icon"><use href="#i-alert"/></svg>
+        <div style="flex:1"><strong>No se pudieron cargar ciudades y PDV.</strong>
+          <div id="alertParamMsg" style="margin-top:3px;font-size:12px;opacity:.9"></div>
+          <div style="margin-top:5px;font-size:12px">Puedes escribirlos manualmente.</div>
+          <div class="alert-actions"><button type="button" class="btn btn-danger btn-sm" onclick="cargarParametrizacion()"><svg class="icon icon-sm"><use href="#i-refresh"/></svg> Reintentar</button></div>
+        </div>
+      </div>
+      <div class="merc-chip">
+        <div class="merc-ava"><svg class="icon icon-lg"><use href="#i-user"/></svg></div>
+        <div class="merc-info"><b id="mercNombre">—</b><span id="mercDoc">—</span></div>
+        <button type="button" class="btn btn-outline btn-sm" onclick="reabrirPortada()"><svg class="icon icon-sm"><use href="#i-edit"/></svg>Cambiar</button>
+      </div>
+      <div class="field">
+        <label class="label label-req" for="ciudad">Ciudad</label>
+        <select id="ciudad" class="select"><option value="">Seleccionar ciudad</option></select>
+        <input type="text" id="ciudadTexto" class="input" placeholder="Escribe la ciudad" style="display:none">
+      </div>
+      <div class="field">
+        <label class="label label-req" for="puntoVenta">Punto de venta</label>
+        <select id="puntoVenta" class="select" disabled><option value="">Selecciona una ciudad primero</option></select>
+        <input type="text" id="pdvTexto" class="input" placeholder="Escribe el punto de venta" style="display:none">
+      </div>
+      <div class="field">
+        <label class="label label-req">Ubicación GPS</label>
+        <div class="loc-box" id="locBox">
+          <div class="loc-top">
+            <div class="loc-ic"><svg class="icon icon-lg"><use href="#i-nav"/></svg></div>
+            <div class="loc-info"><b id="locTitle">Ubicación no capturada</b><span id="locDesc">Toca el botón para registrar tu posición</span></div>
+          </div>
+          <div class="loc-coords" id="locCoords" style="display:none"></div>
+          <button type="button" class="btn btn-soft btn-block" style="margin-top:12px" id="btnGPS" onclick="capturarUbicacion()"><svg class="icon icon-sm"><use href="#i-refresh"/></svg>Actualizar ubicación</button>
+        </div>
+      </div>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('inicio')"><svg class="icon"><use href="#i-save"/></svg>Guardar e iniciar gestión</button></div>
+    </div>
+  </section>
+
+  <!-- VENTAS -->
+  <section class="mod" data-mod="ventas">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-cart"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Ventas</div><div class="card-sub">Resultado comercial de la visita</div></div>
+        <span class="saved-badge" id="badge-ventas"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div class="field"><label class="label label-req">¿Se realizó venta?</label>
+        <div class="opt-grid opt-grid-2">
+          <div class="opt"><input type="radio" name="ventaRealizada" id="vrSi" value="Si"><label for="vrSi"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>Sí</label></div>
+          <div class="opt"><input type="radio" name="ventaRealizada" id="vrNo" value="No"><label for="vrNo"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>No</label></div>
+        </div>
+      </div>
+      <div id="ventaNo" style="display:none">
+        <div class="field"><label class="label label-req" for="ventaMotivoNo">Motivo de no venta</label>
+          <select id="ventaMotivoNo" class="select"><option value="">Seleccionar</option><option>Aún tiene inventario</option><option>Local cerrado</option><option>Falta dinero</option><option>Dueño no está</option><option>Otro</option></select>
+        </div>
+      </div>
+      <div id="ventaSi" style="display:none">
+        <div id="listaVentas"></div>
+        <button type="button" class="btn btn-soft btn-block" onclick="agregarVenta()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar producto vendido</button>
+        <div class="total-card">
+          <div class="total-row"><span class="total-lbl">Total venta</span><span class="total-val" id="totalVenta">$0</span></div>
+        </div>
+        <div id="kitSeccion" style="margin-top:16px">
+          <div class="alert alert-warn" id="kitAviso" style="display:none"><svg class="icon"><use href="#i-star"/></svg><div><strong>Esta compra aplica para el kit.</strong><div style="margin-top:2px">Kit: <span id="kitContenido"></span></div></div></div>
+          <div class="field-row">
+            <div class="field"><label class="label label-req" for="kitsEntregados">Kits entregados</label><input type="number" id="kitsEntregados" class="input" min="0" inputmode="numeric" placeholder="0 si no se entregó"></div>
+            <div class="field"><label class="label label-req" for="recipientesEntregados">Recipientes entregados</label><input type="number" id="recipientesEntregados" class="input" min="0" inputmode="numeric" placeholder="0 si no se entregó"></div>
+          </div>
+        </div>
+      </div>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('ventas')"><svg class="icon"><use href="#i-save"/></svg>Guardar Ventas</button></div>
+    </div>
+  </section>
+
+  <!-- INVENTARIOS -->
+  <section class="mod" data-mod="inventarios">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-box"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Inventarios</div><div class="card-sub">Productos en estante</div></div>
+        <span class="saved-badge" id="badge-inventarios"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div id="listaInventario"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarInv()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar producto</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('inventarios')"><svg class="icon"><use href="#i-save"/></svg>Guardar Inventarios</button></div>
+    </div>
+  </section>
+
+  <!-- EXHIBICIONES ADICIONALES -->
+  <section class="mod" data-mod="exhibiciones">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-star"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Exhibición adicional</div><div class="card-sub">Espacios extra ganados en el PDV</div></div>
+        <span class="saved-badge" id="badge-exhibiciones"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div class="field"><label class="label label-req">¿Se ganó una exhibición adicional?</label>
+        <div class="opt-grid opt-grid-2">
+          <div class="opt"><input type="radio" name="tieneExhibicion" id="exSi" value="Si"><label for="exSi"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>Sí</label></div>
+          <div class="opt"><input type="radio" name="tieneExhibicion" id="exNo" value="No"><label for="exNo"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>No</label></div>
+        </div>
+      </div>
+      <div id="exhibicionSi" style="display:none">
+        <div class="field"><label class="label label-req" for="tipoExhibicion">Tipo de exhibición</label>
+          <select id="tipoExhibicion" class="select"><option value="">Seleccionar tipo</option><option>Cabecera de góndola</option><option>Isla</option><option>Exhibidor adicional</option><option>Punta de góndola</option><option>Vitrina</option><option>Otro</option></select>
+        </div>
+        <div id="listaExhibicion"></div>
+        <button type="button" class="btn btn-soft btn-block" onclick="agregarExhibicion()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar producto exhibido</button>
+        <div class="field" style="margin-top:16px"><label class="label">Foto de la exhibición <span class="label-hint">(opcional)</span></label>
+          <div class="upload" id="uploadExhibicion">
+            <input type="file" id="fileExhibicion" accept="image/*" capture="environment">
+            <div id="defExhibicion"><div class="upload-ic"><svg class="icon icon-lg"><use href="#i-image"/></svg></div><div class="upload-t">Foto del espacio exhibido</div><div class="upload-h">Desde la galería · JPG, PNG</div></div>
+            <div id="prevExhibicion" style="display:none"><img id="imgExhibicion" class="preview-img"><div class="preview-act"><button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation();document.getElementById('fileExhibicion').click()"><svg class="icon icon-sm"><use href="#i-upload"/></svg>Cambiar</button><button type="button" class="btn btn-danger btn-sm" onclick="event.stopPropagation();quitarFoto('exhibicion')"><svg class="icon icon-sm"><use href="#i-trash"/></svg>Quitar</button></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('exhibiciones')"><svg class="icon"><use href="#i-save"/></svg>Guardar Exhibición</button></div>
+    </div>
+  </section>
+
+  <!-- FOTOS -->
+  <section class="mod" data-mod="fotos">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-camera"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Antes y Después</div><div class="card-sub">3 fotos ANTES + 3 fotos DESPUÉS</div></div>
+        <span class="saved-badge" id="badge-fotos"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div class="field">
+        <div class="fotos-titulo"><svg class="icon icon-sm"><use href="#i-image"/></svg>Estante ANTES<span class="fotos-count" id="cntAntes">0 / 3</span></div>
+        <div class="fotos-grid" id="gridAntes"></div>
+      </div>
+      <div class="field">
+        <div class="fotos-titulo"><svg class="icon icon-sm"><use href="#i-image"/></svg>Estante DESPUÉS<span class="fotos-count" id="cntDespues">0 / 3</span></div>
+        <div class="fotos-grid" id="gridDespues"></div>
+      </div>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('fotos')"><svg class="icon"><use href="#i-save"/></svg>Guardar Fotos</button></div>
+    </div>
+  </section>
+
+  <!-- AGOTADOS -->
+  <section class="mod" data-mod="agotados">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-xcircle"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Agotados</div><div class="card-sub">Productos sin existencia en el PDV</div></div>
+        <span class="saved-badge" id="badge-agotados"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div id="listaAgotados"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarAgotado()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar agotado</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('agotados')"><svg class="icon"><use href="#i-save"/></svg>Guardar Agotados</button></div>
+    </div>
+  </section>
+
+  <!-- FECHAS CORTAS -->
+  <section class="mod" data-mod="fechas">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-clock"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Fechas cortas</div><div class="card-sub">Productos próximos a vencer</div></div>
+        <span class="saved-badge" id="badge-fechas"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div id="listaFechas"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarFecha()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar producto</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('fechas')"><svg class="icon"><use href="#i-save"/></svg>Guardar Fechas cortas</button></div>
+    </div>
+  </section>
+
+  <!-- MUESTRAS -->
+  <section class="mod" data-mod="muestras">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-image"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Entrega de muestras</div><div class="card-sub">Producto y cantidad de muestras entregadas en el PDV</div></div>
+        <span class="saved-badge" id="badge-muestras"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div id="listaMuestras"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarMuestra()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar muestra</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('muestras')"><svg class="icon"><use href="#i-save"/></svg>Guardar Muestras</button></div>
+    </div>
+  </section>
+
+  <!-- MATERIAL POP -->
+  <section class="mod" data-mod="materialpop">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-upload"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Material POP</div><div class="card-sub">Material POP entregado en el PDV</div></div>
+        <span class="saved-badge" id="badge-materialpop"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div class="field"><label class="label label-req">¿Material POP en buen estado?</label>
+        <div class="opt-grid">
+          <div class="opt"><input type="radio" name="materialPOP" id="popSi" value="Si"><label for="popSi"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>Sí</label></div>
+          <div class="opt"><input type="radio" name="materialPOP" id="popNo" value="No"><label for="popNo"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>No</label></div>
+          <div class="opt"><input type="radio" name="materialPOP" id="popPar" value="Parcial"><label for="popPar"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>Parcial</label></div>
+        </div>
+      </div>
+      <div id="listaMaterialPop" style="margin-top:16px"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarMaterialPop()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar material</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('materialpop')"><svg class="icon"><use href="#i-save"/></svg>Guardar Material POP</button></div>
+    </div>
+  </section>
+
+  <!-- CHEQUEO DE PRECIOS -->
+  <section class="mod" data-mod="chequeo">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-alert"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Chek de Precios</div><div class="card-sub">Verificación de precio propio y de competencia</div></div>
+        <span class="saved-badge" id="badge-chequeo"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div class="res-sec-h"><svg class="icon icon-sm"><use href="#i-package"/></svg>Nuestros productos (±10% del precio sugerido)</div>
+      <div id="listaChequeo"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarChequeo()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar chequeo</button>
+      <div class="res-sec-h" style="margin-top:20px"><svg class="icon icon-sm"><use href="#i-cart"/></svg>Competencia (sin restricción de rango)</div>
+      <div id="listaCompetencia"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarCompetencia()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar competencia</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('chequeo')"><svg class="icon"><use href="#i-save"/></svg>Guardar Chek de Precios</button></div>
+    </div>
+  </section>
+
+  <!-- PEDIDO / SUGERIDO -->
+  <section class="mod" data-mod="pedido">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-package"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Sugerido</div><div class="card-sub">Productos sugeridos, cantidades y promociones</div></div>
+        <span class="saved-badge" id="badge-pedido"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div id="listaPedido"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarProducto()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar producto</button>
+      <div class="field" style="margin-top:16px"><label class="label">Promociones</label>
+        <div class="opt-grid">
+          <div class="opt"><input type="checkbox" id="promo1" value="Combo 2x1"><label for="promo1"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>Combo 2x1</label></div>
+          <div class="opt"><input type="checkbox" id="promo2" value="Descuento volumen"><label for="promo2"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>Desc. volumen</label></div>
+          <div class="opt"><input type="checkbox" id="promo3" value="Promo del mes"><label for="promo3"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>Promo del mes</label></div>
+          <div class="opt"><input type="checkbox" id="promo4" value="Bonificación"><label for="promo4"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>Bonificación</label></div>
+        </div>
+      </div>
+      <div class="field"><label class="label" for="descuento">Descuento aplicado ($)</label><input type="number" id="descuento" class="input" min="0" value="0"></div>
+      <div class="total-card">
+        <div class="total-row"><span class="total-lbl">Subtotal</span><span class="total-val" id="totalPedido">$0</span></div>
+        <div class="total-row big"><span class="total-lbl">Total final</span><span class="total-val" id="totalFinal">$0</span></div>
+      </div>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('pedido')"><svg class="icon"><use href="#i-mail"/></svg>Guardar y enviar pedido por correo</button></div>
+    </div>
+  </section>
+
+  <!-- RESUMEN -->
+  <section class="mod" data-mod="resumen">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-list"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Resumen de la gestión</div><div class="card-sub">Revisa antes de finalizar</div></div>
+      </div>
+      <div id="resumenContenido"></div>
+      <div class="field" style="margin-top:8px"><label class="label" for="proximaVisita">Próxima visita programada</label><input type="date" id="proximaVisita" class="input"></div>
+      <div class="field"><label class="label" for="observacionesGenerales">Observaciones finales</label><textarea id="observacionesGenerales" class="textarea" placeholder="Compromisos y notas"></textarea></div>
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button type="button" class="btn btn-success" style="flex:1" onclick="compartirWhatsApp()"><svg class="icon"><use href="#i-chat"/></svg>WhatsApp</button>
+        <button type="button" class="btn btn-outline" style="flex:1" onclick="copiarGestion()"><svg class="icon"><use href="#i-copy"/></svg>Copiar</button>
+      </div>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('resumen', true)"><svg class="icon"><use href="#i-check"/></svg>Finalizar gestión</button></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FLOWER -->
+<div class="flower-bd" id="flowerBd" onclick="closeFlower()"></div>
+<div class="flower" id="flower">
+  <!-- Fila lejana (paso 1-6 de la ruta), con curva tipo abanico -->
+  <button class="petal" data-mod="inicio"       style="--x:-150px;--y:-150px"><span class="petal-ic"><svg><use href="#i-pin"/></svg></span><span class="petal-lbl">Inicio</span></button>
+  <button class="petal" data-mod="inventarios"  style="--x:-90px;--y:-173px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inventario</span></button>
+  <button class="petal" data-mod="fotos"        style="--x:-30px;--y:-185px"><span class="petal-ic"><svg><use href="#i-camera"/></svg></span><span class="petal-lbl">Fotos</span></button>
+  <button class="petal" data-mod="ventas"       style="--x:30px;--y:-185px"><span class="petal-ic"><svg><use href="#i-cart"/></svg></span><span class="petal-lbl">Ventas</span></button>
+  <button class="petal" data-mod="exhibiciones" style="--x:90px;--y:-173px"><span class="petal-ic"><svg><use href="#i-star"/></svg></span><span class="petal-lbl">Exhibición</span></button>
+  <button class="petal" data-mod="agotados"     style="--x:150px;--y:-150px"><span class="petal-ic"><svg><use href="#i-xcircle"/></svg></span><span class="petal-lbl">Agotados</span></button>
+  <!-- Fila cercana (paso 7-12 de la ruta), misma curva más cerca del fab -->
+  <button class="petal" data-mod="fechas"       style="--x:-150px;--y:-66px"><span class="petal-ic"><svg><use href="#i-clock"/></svg></span><span class="petal-lbl">Fechas</span></button>
+  <button class="petal" data-mod="muestras"     style="--x:-90px;--y:-80px"><span class="petal-ic"><svg><use href="#i-image"/></svg></span><span class="petal-lbl">Muestras</span></button>
+  <button class="petal" data-mod="materialpop"  style="--x:-30px;--y:-87px"><span class="petal-ic"><svg><use href="#i-upload"/></svg></span><span class="petal-lbl">Mat. POP</span></button>
+  <button class="petal" data-mod="chequeo"      style="--x:30px;--y:-87px"><span class="petal-ic"><svg><use href="#i-alert"/></svg></span><span class="petal-lbl">Chek Precio</span></button>
+  <button class="petal" data-mod="pedido"       style="--x:90px;--y:-80px"><span class="petal-ic"><svg><use href="#i-package"/></svg></span><span class="petal-lbl">Sugerido</span></button>
+  <button class="petal" data-mod="resumen"      style="--x:150px;--y:-66px"><span class="petal-ic"><svg><use href="#i-list"/></svg></span><span class="petal-lbl">Resumen</span></button>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottomnav">
+  <div class="nav-side left"><button class="nav-icon" id="btnPersona" type="button" aria-label="Mi información"><svg class="icon"><use href="#i-user"/></svg></button></div>
+  <div class="fab-slot"><button class="fab" id="fab" type="button" aria-label="Navegar módulos"><span class="fab-ic"><svg class="icon icon-lg"><use href="#i-grid"/></svg></span></button></div>
+  <div class="nav-side right"></div>
+</nav>
+
+<!-- MODAL PERSONA -->
+<div class="overlay" id="personaModal">
+  <div class="modal left">
+    <button class="modal-close" onclick="cerrarPersona()"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
+    <div class="modal-h"><svg class="icon"><use href="#i-user"/></svg>Mi información</div>
+    <div class="modal-p">Datos del mercaderista y lugar</div>
+    <div class="field"><label class="label">Nombre</label><input type="text" id="pNombre" class="input"></div>
+    <div class="field"><label class="label">Documento</label><input type="tel" id="pDoc" class="input" inputmode="numeric"></div>
+    <div class="field"><label class="label">Teléfono</label><input type="tel" id="pTel" class="input" inputmode="tel" placeholder="Teléfono"></div>
+    <div class="merc-chip" style="margin:4px 0 16px"><div class="merc-ava"><svg class="icon"><use href="#i-pin"/></svg></div><div class="merc-info"><b>Ciudad / PDV</b><span id="pPdvActual">—</span></div><button type="button" class="btn btn-outline btn-sm" onclick="cerrarPersona();goTo('inicio')"><svg class="icon icon-sm"><use href="#i-edit"/></svg>Cambiar</button></div>
+    <div class="merc-chip" style="margin:0 0 16px"><div class="merc-ava"><svg class="icon"><use href="#i-id"/></svg></div><div class="merc-info"><b>Código de sesión</b><span id="pCodigoSesion">—</span></div><button type="button" class="btn btn-outline btn-sm" onclick="copiarCodigoSesion()"><svg class="icon icon-sm"><use href="#i-copy"/></svg>Copiar</button></div>
+    <button class="btn btn-primary btn-block" onclick="guardarPersona()"><svg class="icon"><use href="#i-save"/></svg>Guardar cambios</button>
+    <button class="btn btn-danger btn-block" style="margin-top:10px" onclick="salirSesion()"><svg class="icon"><use href="#i-x"/></svg>Salir (podrás volver con tu código)</button>
+
+    <div class="ayudas-sec">
+      <div class="ayudas-titulo"><svg class="icon icon-sm"><use href="#i-help"/></svg>Material de apoyo</div>
+      <a class="ayuda-link" id="ayudaDrive" target="_blank" rel="noopener"><span class="ayuda-ic"><svg class="icon"><use href="#i-box"/></svg></span>Abrir Drive<svg class="icon icon-sm ayuda-go"><use href="#i-chevR"/></svg></a>
+    </div>
+  </div>
+</div>
+
+<!-- Lista global de SKU para los <input list> -->
+<datalist id="skusGlobal"></datalist>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><svg class="icon icon-sm"><use href="#i-check"/></svg><span id="toastMsg"></span></div>
+
+<!-- OVERLAYS -->
+<div class="overlay" id="loadingOverlay"><div class="modal"><div class="spinner"></div><div class="modal-msg" id="loadingMsg">Guardando...</div></div></div>
+<div class="overlay" id="successModal"><div class="modal">
+  <div class="ok-ic"><svg class="icon icon-xl"><use href="#i-check"/></svg></div>
+  <div class="ok-title">Gestión finalizada</div>
+  <div class="ok-sub">Toda la información quedó registrada.</div>
+  <div class="ok-info" id="successInfo"></div>
+  <div style="display:flex;gap:10px;margin-bottom:10px">
+    <button type="button" class="btn btn-success" style="flex:1" onclick="compartirWhatsApp()"><svg class="icon icon-sm"><use href="#i-chat"/></svg>WhatsApp</button>
+    <button type="button" class="btn btn-outline" style="flex:1" onclick="copiarGestion()"><svg class="icon icon-sm"><use href="#i-copy"/></svg>Copiar</button>
+  </div>
+  <button class="btn btn-soft btn-block" style="margin-bottom:10px" onclick="cerrarExito()"><svg class="icon"><use href="#i-arrowr"/></svg>Seguir en mi sesión</button>
+  <button class="btn btn-primary btn-block" onclick="nuevaGestion()"><svg class="icon"><use href="#i-plus"/></svg>Nueva gestión</button>
+</div></div>
+
+<!-- CÓDIGO DE SESIÓN (se muestra tras el primer guardado) -->
+<div class="overlay" id="codigoSesionModal"><div class="modal">
+  <div class="ok-ic"><svg class="icon icon-xl"><use href="#i-id"/></svg></div>
+  <div class="ok-title">Guarda tu código de sesión</div>
+  <div class="ok-sub">Si sales de la app, cambias de dispositivo o se borran tus datos locales, lo necesitarás para recuperar esta gestión.</div>
+  <div class="ok-info" id="codigoSesionTexto" style="font-size:16px;font-weight:700;text-align:center;letter-spacing:.5px"></div>
+  <div style="display:flex;gap:10px">
+    <button type="button" class="btn btn-outline" style="flex:1" onclick="copiarCodigoSesion()"><svg class="icon icon-sm"><use href="#i-copy"/></svg>Copiar</button>
+    <button type="button" class="btn btn-primary" style="flex:1" onclick="cerrarCodigoSesion()">Entendido</button>
+  </div>
+</div></div>
+
+<!-- RECUPERAR SESIÓN (desde la portada) -->
+<div class="overlay" id="recuperarModal"><div class="modal">
+  <div class="modal-h" style="justify-content:center"><svg class="icon"><use href="#i-refresh"/></svg>Recuperar sesión</div>
+  <div class="modal-p" style="text-align:center">Ingresa el código de sesión que recibiste al iniciar tu gestión.</div>
+  <div class="field"><input type="text" id="codigoRecuperar" class="input" placeholder="Ej: PQP-20260723-153000-123" style="text-align:center"></div>
+  <div id="recuperarErr" style="display:none;color:var(--error);font-size:12.5px;margin-bottom:10px;text-align:center"></div>
+  <div style="display:flex;gap:10px">
+    <button type="button" class="btn btn-outline" style="flex:1" onclick="cerrarRecuperarSesion()">Cancelar</button>
+    <button type="button" class="btn btn-primary" style="flex:1" onclick="confirmarRecuperarSesion()">Recuperar</button>
+  </div>
+</div></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby3-eWikagLLzkKH3XA_6rlMxYjUMmSr0rezMG0rweOYQowMWjAPdQbuCUu3IaqIpYA/exec';
+// Carpeta de Drive con material de apoyo
+const AYUDAS = {
+  drive: 'https://drive.google.com/drive/folders/1THDU2CZIMfJn2qdHB-PcbhNW7ZCeywMt?usp=sharing'
+};
+const LS_KEY = 'pqp_session_v1';
+const LS_FOTOS = 'pqp_fotos_v1';
+const HORA_CIERRE = 23;        // la sesión dura todo el día y se cierra sola a las 11 pm
+const KIT_UMBRAL = 20000;      // compra desde la cual aplica la mecánica del kit (solo informativo; siempre se pregunta)
+const KIT_CONTENIDO = 'Detergente polvo 125 g + Detergente líquido 110 g + Suavizante 110 g';
+const VENTAS_SOLO_SABADO = false;
+function diaClave(ms){ const d=new Date(ms||Date.now()); return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2); }
+
+// Orden = ruta lógica de la visita: llegada, inventario, fotos, ventas, exhibición, agotados, fechas, muestras, POP, chequeo, sugerido, resumen
+const MODS = [
+  {id:'inicio',       icon:'i-pin',     label:'Inicio'},
+  {id:'inventarios',  icon:'i-box',     label:'Inventarios'},
+  {id:'fotos',        icon:'i-camera',  label:'Fotos'},
+  {id:'ventas',       icon:'i-cart',    label:'Ventas'},
+  {id:'exhibiciones', icon:'i-star',    label:'Exhibición'},
+  {id:'agotados',     icon:'i-xcircle', label:'Agotados'},
+  {id:'fechas',       icon:'i-clock',   label:'Fechas cortas'},
+  {id:'muestras',     icon:'i-image',   label:'Entrega muestras'},
+  {id:'materialpop',  icon:'i-upload',  label:'Material POP'},
+  {id:'chequeo',      icon:'i-alert',   label:'Chek Precios'},
+  {id:'pedido',       icon:'i-package', label:'Sugerido'},
+  {id:'resumen',      icon:'i-list',    label:'Resumen'}
+];
+
+let parametrizacion = { ciudadesPDV:{}, skus:[], muestras:[], materialPOPCat:[] };
+let muestrasList = [], materialPopList = [], chequeoList = [], chequeoCompList = [];
+let modoManual = false;
+let registroId = '';
+let saved = {};
+let current = 'inicio';
+let flowerOpen = false;
+let ubicacion = { lat:null, lng:null, acc:null };
+let fotoPerfil = '', fotoPerfilURL = '';
+let fotosAntes = ['','',''], fotosDespues = ['','',''];
+let fotosAntesURL = ['','',''], fotosDespuesURL = ['','',''];
+let productosPedido = [], agotadosList = [], fechasList = [], ventasList = [], inventarioList = [], exhibicionList = [];
+let fotoExhibicion = '', fotoExhibicionURL = '';
+let pendCiudad = null, pendPDV = null, ayudasOpen = false, restaurando = false;
+let registroPromise = null; // promesa de la creación inicial del registro; guardarModulo() la espera para no crear una fila duplicada
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  const ahora = new Date();
+  document.getElementById('heroDate').textContent = ahora.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});
+  // Enlaces de material de apoyo (dentro del panel persona)
+  document.getElementById('ayudaDrive').href = AYUDAS.drive;
+
+  cargarParametrizacion();
+
+  document.getElementById('nombreMercaderista').addEventListener('input', onIdentChange);
+  document.getElementById('cedulaMercaderista').addEventListener('input', onIdentChange);
+  document.getElementById('ciudad').addEventListener('change', actualizarPDV);
+  document.querySelectorAll('input[name="ventaRealizada"]').forEach(r => r.addEventListener('change', onVentaChange));
+  document.querySelectorAll('input[name="ventaCondicion"]').forEach(r => r.addEventListener('change', () => {
+    const s=document.querySelector('input[name="ventaCondicion"]:checked'); document.getElementById('ventaPlazoG').style.display=(s&&s.value==='Credito')?'block':'none';
+  }));
+  document.getElementById('fileIngreso').addEventListener('change', e => leerFoto(e,'perfil'));
+  document.getElementById('fileExhibicion').addEventListener('change', e => leerFoto(e,'exhibicion'));
+  renderFotoSlots('antes'); renderFotoSlots('despues');
+  document.querySelectorAll('input[name="tieneExhibicion"]').forEach(r => r.addEventListener('change', onExhibicionChange));
+  document.getElementById('descuento').addEventListener('input', calcularTotalFinal);
+
+  // Persistencia automática ante cualquier cambio (debounced)
+  let pt; const persistDeb = () => { clearTimeout(pt); pt=setTimeout(persistir, 600); };
+  document.addEventListener('input', persistDeb);
+  document.addEventListener('change', persistDeb);
+
+  // Navegación por pétalos: delegación => un toque en cualquier parte del pétalo navega
+  document.getElementById('flower').addEventListener('click', e => {
+    const pet = e.target.closest('.petal');
+    if (pet) goTo(pet.dataset.mod);
+  });
+  // Botones de la barra inferior por delegación (robusto al icono)
+  document.querySelector('.bottomnav').addEventListener('click', e => {
+    if (e.target.closest('#fab')) toggleFlower();
+    else if (e.target.closest('#btnPersona')) abrirPersona();
+  });
+
+  // Restaurar sesión previa (tras caída de red, cierre, etc.)
+  if (!restaurarSesion()) renderNav();
+});
+
+// ===== NAV =====
+function identDone(){ return !!(val('nombreMercaderista') && val('cedulaMercaderista')); }
+function esSabado(){ return new Date().getDay() === 6; } // 0=domingo...6=sábado
+function modAvailable(id){ return id !== 'ventas' || !VENTAS_SOLO_SABADO || esSabado(); }
+function availableMods(){ return MODS.slice(); }
+
+function goTo(id){
+  if(!modAvailable(id)){ toast('El módulo de Ventas solo está disponible los sábados', true); closeFlower(); return; }
+  current=id; renderNav(); closeFlower();
+  if(id==='resumen') renderResumen();
+}
+function nextMod(){ const a=availableMods().map(m=>m.id); const i=a.indexOf(current); if(i<a.length-1) goTo(a[i+1]); }
+function prevMod(){ const a=availableMods().map(m=>m.id); const i=a.indexOf(current); if(i>0) goTo(a[i-1]); }
+
+function renderNav(){
+  document.querySelectorAll('.mod').forEach(el => el.classList.toggle('active', el.dataset.mod===current));
+  const a = availableMods().map(m=>m.id);
+  const pos = a.indexOf(current)+1;
+  const meta = MODS.find(m=>m.id===current);
+  document.getElementById('stepPill').textContent = meta ? meta.label : '';
+  document.getElementById('progress').innerHTML = a.map(id => '<span class="' + (id===current?'cur':(saved[id]?'done':'')) + '"></span>').join('');
+  // badges
+  MODS.forEach(m => { const b=document.getElementById('badge-'+m.id); if(b) b.classList.toggle('on', !!saved[m.id]); });
+  renderPetals();
+  window.scrollTo(0, 0);
+}
+function renderPetals(){
+  document.querySelectorAll('.petal').forEach(p => {
+    const id=p.dataset.mod;
+    p.classList.toggle('active', id===current);
+    p.classList.toggle('saved', !!saved[id]);
+    p.classList.toggle('locked', !modAvailable(id));
+  });
+}
+function toggleFlower(){ flowerOpen?closeFlower():openFlower(); }
+function openFlower(){ flowerOpen=true; document.getElementById('flower').classList.add('open'); document.getElementById('flowerBd').classList.add('open'); document.getElementById('fab').classList.add('spin'); renderPetals(); }
+function closeFlower(){ flowerOpen=false; document.getElementById('flower').classList.remove('open'); document.getElementById('flowerBd').classList.remove('open'); document.getElementById('fab').classList.remove('spin'); }
+
+function onIdentChange(){
+  const n=val('nombreMercaderista'), c=val('cedulaMercaderista');
+  document.getElementById('heroGreet').textContent = n ? ('Hola, '+n.split(' ')[0]) : 'Hola, mercaderista';
+  const mn=document.getElementById('mercNombre'), md=document.getElementById('mercDoc');
+  if(mn) mn.textContent = n || '—';
+  if(md) md.textContent = c ? ('Documento '+c) : '—';
+}
+
+// ===== PORTADA =====
+async function comenzar(){
+  if(window._comenzando) return; // evita doble-tap disparando dos creaciones en paralelo
+  const n=val('nombreMercaderista'), c=val('cedulaMercaderista');
+  if(!n || !c || !(fotoPerfil||fotoPerfilURL)){
+    const f=document.getElementById('portadaForm');
+    f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake');
+    document.getElementById('portadaErr').style.display='block';
+    return;
+  }
+  if(new Date().getHours()>=HORA_CIERRE){ alert('El horario de gestión terminó a las '+(HORA_CIERRE-12)+' pm. Inicia de nuevo mañana.'); return; }
+  window._comenzando=true;
+  document.getElementById('portadaErr').style.display='none';
+  onIdentChange();
+  persistir(); persistirFotos();
+  // El ingreso se confirma ANTES de avanzar: el registro y la selfie deben quedar en el servidor.
+  mostrarLoading('Registrando tu ingreso...');
+  const r=await guardarSilencioso();
+  ocultarLoading();
+  if(!r.ok){
+    window._comenzando=false;
+    alert('No se pudo registrar tu ingreso: '+r.error+'\n\nRevisa tu conexión e intenta de nuevo con "Comenzar".');
+    return;
+  }
+  capturarUbicacion(); // captura GPS automática al entrar (este click habilita el permiso)
+  const p=document.getElementById('portada');
+  p.classList.add('hide');
+  window._portadaTimer = setTimeout(()=>{ p.style.display='none'; }, 650);
+  current='inicio'; renderNav();
+}
+function reabrirPortada(){
+  window._comenzando=false; // permite volver a tocar "Comenzar" al reabrir la portada
+  clearTimeout(window._portadaTimer);
+  const p=document.getElementById('portada');
+  p.style.display='flex';
+  requestAnimationFrame(()=>p.classList.remove('hide'));
+}
+
+// Guardado inicial/silencioso (sin overlay ni validación de módulo)
+// Devuelve {ok, error}. Para el ingreso exige que el servidor confirme el registro Y la URL de la selfie.
+async function guardarSilencioso(){
+  try{
+    const eraNuevo=!registroId;
+    const gestion=recolectarGestion();
+    const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({registroId:registroId,gestion:gestion,modulo:'ingreso'}),redirect:'follow'});
+    const data=await res.json();
+    if(data&&data.codigo==='SESION_CERRADA'){ sesionCerradaPorServidor(data.error); return {ok:false,error:data.error}; }
+    if(!data||!data.success) return {ok:false,error:(data&&data.error)||'respuesta inválida del servidor'};
+    registroId=data.registroId||registroId;
+    if(data.fotoPerfilURL){ fotoPerfilURL=data.fotoPerfilURL; fotoPerfil=''; }
+    persistir(); persistirFotos();
+    if(!fotoPerfilURL) return {ok:false,error:'la selfie no se pudo subir'+((data.erroresFoto&&data.erroresFoto.length)?' ('+data.erroresFoto.join('; ')+')':'')};
+    if(eraNuevo) mostrarCodigoSesion();
+    return {ok:true};
+  }catch(e){ return {ok:false,error:e.message||'sin conexión'}; }
+}
+
+// ===== SESIÓN DEL DÍA: cierre automático a las 11 pm =====
+function cerrarEnServidor(id){
+  try{ fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({accion:'cerrar',registroId:id}),redirect:'follow'}).catch(()=>{}); }catch(e){}
+}
+function sesionCerradaPorServidor(msg){
+  limpiarSesionLocal(); registroId='';
+  alert((msg||'La sesión se cerró.')+'\n\nSe iniciará una nueva sesión.'); location.reload();
+}
+function revisarCierreDiario(){
+  const d=new Date();
+  if(!registroId || d.getHours()<HORA_CIERRE) return;
+  cerrarEnServidor(registroId);
+  limpiarSesionLocal();
+  const idCerrado=registroId; registroId='';
+  alert('Son las '+(HORA_CIERRE-12)+' pm: tu sesión ('+idCerrado+') se cerró automáticamente. Mañana inicia una nueva.');
+  location.reload();
+}
+setInterval(revisarCierreDiario, 30000);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) revisarCierreDiario(); });
+
+// Salir sin perder la sesión: se muestra el código y se puede volver con "Recuperar sesión" durante el día
+function salirSesion(){
+  if(!registroId){ cerrarPersona(); return; }
+  if(!confirm('Vas a salir de la sesión.\n\nTu código es:\n'+registroId+'\n\nGuárdalo: con él puedes volver exactamente a donde estabas durante el día (hasta las '+(HORA_CIERRE-12)+' pm). ¿Salir?')) return;
+  copiarCodigoSesion();
+  limpiarSesionLocal(); registroId='';
+  location.reload();
+}
+
+// ===== CÓDIGO DE SESIÓN =====
+function mostrarCodigoSesion(){
+  const el=document.getElementById('codigoSesionTexto'); if(el) el.textContent=registroId;
+  document.getElementById('codigoSesionModal').classList.add('show');
+}
+function cerrarCodigoSesion(){ document.getElementById('codigoSesionModal').classList.remove('show'); }
+function copiarCodigoSesion(){
+  if(!registroId){ toast('Aún no hay código de sesión', true); return; }
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(registroId).then(()=>toast('Código copiado')).catch(()=>fallbackCopy(registroId)); }
+  else fallbackCopy(registroId);
+}
+
+// ===== RECUPERAR SESIÓN (por código, desde la portada) =====
+function abrirRecuperarSesion(){
+  document.getElementById('codigoRecuperar').value='';
+  document.getElementById('recuperarErr').style.display='none';
+  document.getElementById('recuperarModal').classList.add('show');
+}
+function cerrarRecuperarSesion(){ document.getElementById('recuperarModal').classList.remove('show'); }
+async function confirmarRecuperarSesion(){
+  const codigo=document.getElementById('codigoRecuperar').value.trim();
+  const errBox=document.getElementById('recuperarErr');
+  if(!codigo){ errBox.textContent='Ingresa el código de sesión.'; errBox.style.display='block'; return; }
+  mostrarLoading('Recuperando sesión...');
+  try{
+    const res=await fetch(GAS_URL+'?action=recuperar&registroId='+encodeURIComponent(codigo),{redirect:'follow'});
+    const data=await res.json();
+    ocultarLoading();
+    if(data&&data.success){
+      aplicarGestionRemota(data.registroId, data.gestion||{});
+      cerrarRecuperarSesion();
+      toast('Sesión recuperada correctamente');
+    } else {
+      errBox.textContent=(data&&data.error)||'No se encontró esa sesión.';
+      errBox.style.display='block';
+    }
+  }catch(err){
+    ocultarLoading();
+    errBox.textContent='Error de conexión: '+err.message;
+    errBox.style.display='block';
+  }
+}
+// Aplica al formulario una gestión traída del servidor (recuperación por código, posiblemente desde otro dispositivo)
+function aplicarGestionRemota(registroIdRecuperado, g){
+  restaurando=true;
+  registroId=registroIdRecuperado;
+  ['nombreMercaderista','cedulaMercaderista','telefono','ventaMotivoNo','kitsEntregados','recipientesEntregados','descuento','observacionesGenerales','proximaVisita'].forEach(id=>{ const el=document.getElementById(id); if(el&&g[id]!=null) el.value=g[id]; });
+  setRadio('ventaRealizada', g.ventaRealizada); setRadio('materialPOP', g.materialPOP); setRadio('tieneExhibicion', g.tieneExhibicionAdicional);
+  onVentaChange(); onExhibicionChange();
+  if(g.tipoExhibicionAdicional!=null){ const el=document.getElementById('tipoExhibicion'); if(el) el.value=g.tipoExhibicionAdicional; }
+  const promos=(g.pedidoPromos||'').split(',').map(s=>s.trim()).filter(Boolean);
+  ['promo1','promo2','promo3','promo4'].forEach(id=>{ const el=document.getElementById(id); if(el) el.checked=promos.indexOf(el.value)!==-1; });
+  pendCiudad=g.ciudad||''; pendPDV=g.puntoVenta||'';
+  if(modoManual){ document.getElementById('ciudadTexto').value=pendCiudad; document.getElementById('pdvTexto').value=pendPDV; }
+  else { aplicarPendCiudadPDV(); }
+  const darId=list=>(list||[]).map(it=>Object.assign({id:uid('r')},it));
+  productosPedido=darId(g.pedidoProductos); agotadosList=darId(g.agotados); fechasList=darId(g.fechasCortas); ventasList=darId(g.ventaProductos); inventarioList=darId(g.inventarioProductos); exhibicionList=darId(g.exhibicionAdicionalProductos);
+  muestrasList=darId(g.muestrasProductos); materialPopList=darId(g.materialPOPEntregado); chequeoList=darId(g.chequeoPrecios); chequeoCompList=darId(g.chequeoCompetencia);
+  renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
+  fotoPerfil=''; fotoPerfilURL=g.fotoPerfilURL||'';
+  if(fotoPerfilURL){ const box=document.getElementById('fotoIngresoBox'); if(box){ box.classList.add('has'); document.getElementById('fiTitle').textContent='Selfie lista ✓'; document.getElementById('fiSub').textContent='Toca para volver a tomar'; } }
+  fotoExhibicionURL=g.fotoExhibicionURL||'';
+  fotosAntesURL=[g.fotoAntesURL||'', g.fotoAntes2URL||'', g.fotoAntes3URL||'']; fotosDespuesURL=[g.fotoDespuesURL||'', g.fotoDespues2URL||'', g.fotoDespues3URL||''];
+  fotosAntes=['','','']; fotosDespues=['','',''];
+  renderFotoSlots('antes'); renderFotoSlots('despues');
+  if(fotoExhibicionURL){ document.getElementById('imgExhibicion').src=fotoExhibicionURL; document.getElementById('defExhibicion').style.display='none'; document.getElementById('prevExhibicion').style.display='block'; document.getElementById('uploadExhibicion').classList.add('has'); }
+  saved={}; (g.modulosGuardados||'').split(',').map(s=>s.trim()).filter(Boolean).forEach(id=>{ saved[id]=true; });
+  current='inicio';
+  onIdentChange();
+  const p=document.getElementById('portada'); clearTimeout(window._portadaTimer); p.classList.add('hide'); p.style.display='none';
+  renderNav();
+  restaurando=false;
+  persistir();
+}
+
+// ===== FOTOS =====
+function aplicarFoto(tipo, data, slot){
+  if(tipo==='perfil'){
+    // Solo confirma dentro de su propia caja (icono + texto). Nunca se usa como avatar en el resto de la app.
+    fotoPerfil=data; fotoPerfilURL='';
+    const box=document.getElementById('fotoIngresoBox');
+    if(box){ box.classList.add('has'); document.getElementById('fiTitle').textContent='Selfie lista ✓'; document.getElementById('fiSub').textContent='Toca para volver a tomar'; }
+  } else if(tipo==='antes'){
+    fotosAntes[slot]=data; fotosAntesURL[slot]=''; renderFotoSlots('antes');
+  } else if(tipo==='despues'){
+    fotosDespues[slot]=data; fotosDespuesURL[slot]=''; renderFotoSlots('despues');
+  } else if(tipo==='exhibicion'){
+    fotoExhibicion=data; fotoExhibicionURL='';
+    document.getElementById('imgExhibicion').src=data; document.getElementById('defExhibicion').style.display='none'; document.getElementById('prevExhibicion').style.display='block'; document.getElementById('uploadExhibicion').classList.add('has');
+  }
+}
+// Render dinámico de las 3 tarjetas de subida por lado (antes/despues)
+function renderFotoSlots(tipo){
+  const grid=document.getElementById(tipo==='antes'?'gridAntes':'gridDespues');
+  if(!grid) return;
+  const dataArr=tipo==='antes'?fotosAntes:fotosDespues;
+  const urlArr=tipo==='antes'?fotosAntesURL:fotosDespuesURL;
+  const cap=tipo==='antes'?'Antes':'Despues';
+  grid.innerHTML='';
+  for(let i=0;i<3;i++){
+    const hasImg=!!(dataArr[i]||urlArr[i]);
+    const src=dataArr[i]||urlArr[i]||'';
+    const d=document.createElement('div');
+    d.className='upload mini'+(hasImg?' has':'');
+    d.id='upload'+cap+i;
+    d.innerHTML=hasImg
+      ? `<img id="img${cap}${i}" class="preview-img" src="${src}">
+         <div class="preview-act">
+           <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation();document.getElementById('file${cap}${i}').click()"><svg class="icon icon-sm"><use href="#i-upload"/></svg>Cambiar</button>
+           <button type="button" class="btn btn-danger btn-sm" onclick="event.stopPropagation();quitarFoto('${tipo}',${i})"><svg class="icon icon-sm"><use href="#i-trash"/></svg>Quitar</button>
+         </div>
+         <input type="file" id="file${cap}${i}" accept="image/*" capture="environment">`
+      : `<div class="upload-ic"><svg class="icon icon-lg"><use href="#i-image"/></svg></div>
+         <div class="upload-t">Foto ${i+1}</div>
+         <div class="upload-h">Toca para subir</div>
+         <input type="file" id="file${cap}${i}" accept="image/*" capture="environment">`;
+    grid.appendChild(d);
+    document.getElementById('file'+cap+i).addEventListener('change', e => leerFoto(e,tipo,i));
+  }
+  const usados=dataArr.map((v,i)=>v||urlArr[i]).filter(Boolean).length;
+  const cnt=document.getElementById(tipo==='antes'?'cntAntes':'cntDespues');
+  if(cnt){ cnt.textContent=usados+' / 3'; cnt.classList.toggle('ok', usados>=3); }
+}
+// ===== PANEL PERSONA =====
+function abrirPersona(){
+  document.getElementById('pNombre').value = val('nombreMercaderista');
+  document.getElementById('pDoc').value = val('cedulaMercaderista');
+  document.getElementById('pTel').value = val('telefono');
+  document.getElementById('pPdvActual').textContent = (getCiudad()||'—') + ' · ' + (getPDV()||'—');
+  document.getElementById('pCodigoSesion').textContent = registroId || 'Aún no generado';
+  document.getElementById('personaModal').classList.add('show');
+}
+function cerrarPersona(){ document.getElementById('personaModal').classList.remove('show'); }
+function guardarPersona(){
+  document.getElementById('nombreMercaderista').value = document.getElementById('pNombre').value.trim();
+  document.getElementById('cedulaMercaderista').value = document.getElementById('pDoc').value.trim();
+  document.getElementById('telefono').value = document.getElementById('pTel').value.trim();
+  onIdentChange();
+  cerrarPersona();
+  persistir();
+  toast('Información actualizada');
+  if(registroId) guardarSilencioso(); // refleja el cambio en la nube
+}
+
+// ===== MENÚ AYUDAS =====
+function toggleAyudas(){ ayudasOpen?closeAyudas():openAyudas(); }
+function openAyudas(){ ayudasOpen=true; document.getElementById('ayudas').classList.add('open'); document.getElementById('ayudasBd').classList.add('open'); }
+function closeAyudas(){ ayudasOpen=false; document.getElementById('ayudas').classList.remove('open'); document.getElementById('ayudasBd').classList.remove('open'); }
+
+// ===== PERSISTENCIA DE SESIÓN =====
+function persistir(){
+  if(restaurando) return;
+  try{
+    const campos=recolectarGestion(); campos.fotoPerfil=''; campos.fotoExhibicion='';
+    ['fotoAntes','fotoAntes2','fotoAntes3','fotoDespues','fotoDespues2','fotoDespues3'].forEach(k=>campos[k]='');
+    const data={ loggedIn:true, guardadoEn:Date.now(), registroId, saved, current, ubicacion, fotosAntesURL, fotosDespuesURL, fotoExhibicionURL, campos, listas:{ productosPedido, agotadosList, fechasList, ventasList, inventarioList, exhibicionList, muestrasList, materialPopList, chequeoList, chequeoCompList } };
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+  }catch(e){}
+}
+// Las fotos base64 se guardan aparte y SOLO cuando cambian (evita lag en cada tecla/click)
+function persistirFotos(){ try{ localStorage.setItem(LS_FOTOS, JSON.stringify({ fotoPerfil, fotosAntes, fotosDespues, fotoExhibicion })); }catch(e){} }
+function limpiarSesionLocal(){ try{ localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_FOTOS); }catch(e){} }
+function restaurarSesion(){
+  let raw; try{ raw=localStorage.getItem(LS_KEY); }catch(e){ return false; }
+  if(!raw) return false;
+  let d; try{ d=JSON.parse(raw); }catch(e){ return false; }
+  if(!d || !d.loggedIn || !d.campos) return false;
+  // La sesión dura todo el día: se restaura si es de HOY y aún no son las 11 pm; si no, se descarta
+  if(!d.guardadoEn || diaClave(d.guardadoEn)!==diaClave() || new Date().getHours()>=HORA_CIERRE){
+    if(d.registroId && d.guardadoEn) cerrarEnServidor(d.registroId);
+    limpiarSesionLocal();
+    return false;
+  }
+  restaurando = true;
+  const g=d.campos;
+  // Campos simples
+  ['nombreMercaderista','cedulaMercaderista','telefono','ventaMotivoNo','kitsEntregados','recipientesEntregados',
+   'descuento','observacionesGenerales','proximaVisita'].forEach(id=>{ const el=document.getElementById(id); if(el&&g[id]!=null) el.value=g[id]; });
+  // Radios
+  setRadio('ventaRealizada', g.ventaRealizada); setRadio('materialPOP', g.materialPOP); setRadio('tieneExhibicion', g.tieneExhibicionAdicional);
+  onVentaChange(); onExhibicionChange();
+  // tipoExhibicion (select con clave diferente al id del DOM)
+  if(g.tipoExhibicionAdicional!=null){ const el=document.getElementById('tipoExhibicion'); if(el) el.value=g.tipoExhibicionAdicional; }
+  // Promos (desde string "a, b")
+  const promos=(g.pedidoPromos||'').split(',').map(s=>s.trim()).filter(Boolean);
+  ['promo1','promo2','promo3','promo4'].forEach(id=>{ const el=document.getElementById(id); if(el) el.checked=promos.indexOf(el.value)!==-1; });
+  // Ciudad / PDV (se aplican al cargar parametrización)
+  pendCiudad = g.ciudad||''; pendPDV = g.puntoVenta||'';
+  if(modoManual){ document.getElementById('ciudadTexto').value=pendCiudad; document.getElementById('pdvTexto').value=pendPDV; }
+  else { aplicarPendCiudadPDV(); }
+  // Listas
+  const L=d.listas||{};
+  productosPedido=L.productosPedido||[]; agotadosList=L.agotadosList||[]; fechasList=L.fechasList||[]; ventasList=L.ventasList||[]; inventarioList=L.inventarioList||[]; exhibicionList=L.exhibicionList||[];
+  muestrasList=L.muestrasList||[]; materialPopList=L.materialPopList||[]; chequeoList=L.chequeoList||[]; chequeoCompList=L.chequeoCompList||[];
+  renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
+  // Ubicación
+  ubicacion = d.ubicacion||{lat:null,lng:null,acc:null};
+  if(ubicacion.lat&&ubicacion.lng){
+    document.getElementById('locBox').classList.add('ok');
+    document.getElementById('locTitle').textContent='Ubicación capturada';
+    document.getElementById('locDesc').textContent='Precisión aproximada: '+(ubicacion.acc||'?')+' m';
+    const c=document.getElementById('locCoords'); c.style.display='flex';
+    c.innerHTML='<span>'+ubicacion.lat+', '+ubicacion.lng+'</span> · <a href="https://www.google.com/maps?q='+ubicacion.lat+','+ubicacion.lng+'" target="_blank">Ver en Maps</a>';
+  }
+  // Fotos (clave separada)
+  let fotos={}; try{ fotos=JSON.parse(localStorage.getItem(LS_FOTOS)||'{}'); }catch(e){}
+  fotoPerfilURL=d.fotoPerfilURL||''; fotoExhibicionURL=d.fotoExhibicionURL||'';
+  fotosAntesURL = Array.isArray(d.fotosAntesURL) ? d.fotosAntesURL.slice(0,3) : (d.fotoAntesURL?[d.fotoAntesURL,'','']:['','','']);
+  fotosDespuesURL = Array.isArray(d.fotosDespuesURL) ? d.fotosDespuesURL.slice(0,3) : (d.fotoDespuesURL?[d.fotoDespuesURL,'','']:['','','']);
+  while(fotosAntesURL.length<3) fotosAntesURL.push('');
+  while(fotosDespuesURL.length<3) fotosDespuesURL.push('');
+  if(Array.isArray(fotos.fotosAntes)){ fotosAntes = fotos.fotosAntes.slice(0,3); while(fotosAntes.length<3) fotosAntes.push(''); }
+  if(Array.isArray(fotos.fotosDespues)){ fotosDespues = fotos.fotosDespues.slice(0,3); while(fotosDespues.length<3) fotosDespues.push(''); }
+  renderFotoSlots('antes'); renderFotoSlots('despues');
+  if(fotos.fotoPerfil){ aplicarFoto('perfil', fotos.fotoPerfil); }
+  if(fotos.fotoExhibicion){ aplicarFoto('exhibicion', fotos.fotoExhibicion); }
+  else if(fotoExhibicionURL){ document.getElementById('imgExhibicion').src=fotoExhibicionURL; document.getElementById('defExhibicion').style.display='none'; document.getElementById('prevExhibicion').style.display='block'; document.getElementById('uploadExhibicion').classList.add('has'); }
+  // Estado
+  saved=d.saved||{}; registroId=d.registroId||''; current=d.current||'inicio';
+  if(!modAvailable(current)) current='inicio'; // ej. quedó abierto en Ventas un sábado y hoy ya no está disponible
+  onIdentChange();
+  // Ocultar portada (ya estaba logueado)
+  const p=document.getElementById('portada'); p.classList.add('hide'); p.style.display='none';
+  renderNav();
+  restaurando = false;
+  return true;
+}
+function setRadio(name, value){ if(!value) return; const el=document.querySelector('input[name="'+name+'"][value="'+value+'"]'); if(el) el.checked=true; }
+function aplicarPendCiudadPDV(){
+  if(pendCiudad==null) return;
+  const cs=document.getElementById('ciudad');
+  if(cs && cs.querySelector('option[value="'+(window.CSS&&CSS.escape?CSS.escape(pendCiudad):pendCiudad)+'"]')){ cs.value=pendCiudad; actualizarPDV(); const ps=document.getElementById('puntoVenta'); if(ps) ps.value=pendPDV; }
+}
+
+// ===== UBICACIÓN GPS =====
+function capturarUbicacion(){
+  const t=document.getElementById('locTitle'), d=document.getElementById('locDesc'), btn=document.getElementById('btnGPS');
+  if(!navigator.geolocation){ d.textContent='Tu dispositivo no soporta geolocalización.'; return; }
+  t.textContent='Obteniendo ubicación...'; d.textContent='Permite el acceso a tu ubicación'; btn.disabled=true;
+  navigator.geolocation.getCurrentPosition(pos => {
+    ubicacion.lat=+pos.coords.latitude.toFixed(6); ubicacion.lng=+pos.coords.longitude.toFixed(6); ubicacion.acc=Math.round(pos.coords.accuracy);
+    document.getElementById('locBox').classList.add('ok');
+    t.textContent='Ubicación capturada';
+    d.textContent='Precisión aproximada: '+ubicacion.acc+' m';
+    const c=document.getElementById('locCoords'); c.style.display='flex';
+    c.innerHTML = '<span>'+ubicacion.lat+', '+ubicacion.lng+'</span> · <a href="https://www.google.com/maps?q='+ubicacion.lat+','+ubicacion.lng+'" target="_blank">Ver en Maps</a>';
+    btn.disabled=false; btn.innerHTML='<svg class="icon icon-sm"><use href="#i-refresh"/></svg>Volver a capturar';
+  }, err => {
+    btn.disabled=false; t.textContent='No se pudo obtener la ubicación';
+    d.textContent = err.code===1 ? 'Permiso denegado. Actívalo en el navegador.' : 'Intenta de nuevo en un lugar abierto.';
+  }, { enableHighAccuracy:true, timeout:12000, maximumAge:0 });
+}
+
+// ===== PARAMETRIZACIÓN =====
+async function cargarParametrizacion(){
+  ocultarAlertaParam();
+  try{
+    const res=await fetch(GAS_URL+'?action=parametrizacion',{redirect:'follow'});
+    const data=await res.json();
+    if(data&&data.success&&data.ciudadesPDV&&Object.keys(data.ciudadesPDV).length>0){ parametrizacion=data; parametrizacion.muestras=data.muestras||[]; parametrizacion.materialPOPCat=data.materialPOPCat||[]; modoManual=false; activarModoSelect(); cargarCiudades(); poblarSkus(); aplicarPendCiudadPDV(); }
+    else activarModoManual((data&&data.error)?data.error:'La hoja respondió sin ciudades. Revisa la hoja "PDV ciudad".');
+  }catch(err){ activarModoManual('No hay conexión con el servidor. ('+err.message+')'); }
+}
+function activarModoSelect(){ ['ciudad','puntoVenta'].forEach(i=>document.getElementById(i).style.display=''); ['ciudadTexto','pdvTexto'].forEach(i=>document.getElementById(i).style.display='none'); }
+function activarModoManual(msg){ modoManual=true; ['ciudad','puntoVenta'].forEach(i=>document.getElementById(i).style.display='none'); ['ciudadTexto','pdvTexto'].forEach(i=>document.getElementById(i).style.display=''); document.getElementById('alertParamMsg').textContent=msg; document.getElementById('alertParam').style.display='flex'; if(pendCiudad!=null){ document.getElementById('ciudadTexto').value=pendCiudad; document.getElementById('pdvTexto').value=pendPDV||''; } }
+function ocultarAlertaParam(){ document.getElementById('alertParam').style.display='none'; }
+function cargarCiudades(){ const s=document.getElementById('ciudad'); s.innerHTML='<option value="">Seleccionar ciudad</option>'; Object.keys(parametrizacion.ciudadesPDV).sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;s.appendChild(o);}); }
+function actualizarPDV(){ const c=document.getElementById('ciudad').value; const s=document.getElementById('puntoVenta'); s.innerHTML='<option value="">Seleccionar PDV</option>'; if(c&&parametrizacion.ciudadesPDV[c]){ parametrizacion.ciudadesPDV[c].slice().sort().forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;s.appendChild(o);}); s.disabled=false; } else s.disabled=true; }
+function getCiudad(){ return modoManual?document.getElementById('ciudadTexto').value.trim():document.getElementById('ciudad').value.trim(); }
+function getPDV(){ return modoManual?document.getElementById('pdvTexto').value.trim():document.getElementById('puntoVenta').value.trim(); }
+
+// ===== VENTAS =====
+function onVentaChange(){ const v=(document.querySelector('input[name="ventaRealizada"]:checked')||{}).value; document.getElementById('ventaNo').style.display=v==='No'?'block':'none'; document.getElementById('ventaSi').style.display=v==='Si'?'block':'none'; if(v==='Si'&&ventasList.length===0&&!restaurando) agregarVenta(); }
+
+// ===== LISTAS (pedido / agotados / fechas) =====
+function findItem(id){ return productosPedido.find(x=>x.id===id) || agotadosList.find(x=>x.id===id) || fechasList.find(x=>x.id===id) || ventasList.find(x=>x.id===id) || inventarioList.find(x=>x.id===id) || exhibicionList.find(x=>x.id===id) || muestrasList.find(x=>x.id===id) || materialPopList.find(x=>x.id===id) || chequeoList.find(x=>x.id===id) || chequeoCompList.find(x=>x.id===id); }
+
+// Ventas (categoría + SKU + cantidad + precio/subtotal, para el total de venta y la regla de Evacuador)
+function agregarVenta(){ ventasList.push({id:uid('v'),categoria:'',sku:'',cantidad:1,precio:0,subtotal:0}); renderVentas(); calcularTotalVenta(); }
+function eliminarVenta(id){ ventasList=ventasList.filter(x=>x.id!==id); renderVentas(); calcularTotalVenta(); }
+function renderVentas(){
+  const cont=document.getElementById('listaVentas'); if(!cont) return; cont.innerHTML='';
+  if(ventasList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega los productos vendidos.</div>'; return; }
+  ventasList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-cart"/></svg>Vendido ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarVenta('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoSkuCascada(p)}
+    <div class="field" style="margin-bottom:0"><label class="label label-req">Cantidad</label><input type="number" class="input" min="1" value="${p.cantidad}" oninput="setCantidadVenta('${p.id}',this.value)"></div>
+    <div class="item-sub">Precio: <strong>$${fmt(p.precio)}</strong> · Subtotal: <strong>$${fmt(p.subtotal)}</strong></div>`; cont.appendChild(d); });
+}
+function setCantidadVenta(id,v){
+  const p=ventasList.find(x=>x.id===id); if(!p) return;
+  p.cantidad=parseFloat(v)||0; p.subtotal=p.cantidad*(p.precio||0);
+  subDOM('listaVentas',ventasList,p); calcularTotalVenta();
+}
+// Total de venta + mecánica del kit (aviso informativo desde KIT_UMBRAL; kits y recipientes se preguntan SIEMPRE)
+function totalVentaValor(){ return ventasList.reduce((s,p)=>s+(p.subtotal||0),0); }
+function kitAplica(){ return totalVentaValor() >= KIT_UMBRAL; }
+function calcularTotalVenta(){
+  const total=totalVentaValor();
+  const elTotal=document.getElementById('totalVenta'); if(elTotal) elTotal.textContent='$'+fmt(total);
+  const av=document.getElementById('kitAviso'); if(av) av.style.display=kitAplica()?'flex':'none';
+  const kc=document.getElementById('kitContenido'); if(kc) kc.textContent=KIT_CONTENIDO;
+  return total;
+}
+
+// Inventario (categoría + SKU + cantidad en estante)
+function agregarInv(){ inventarioList.push({id:uid('n'),categoria:'',sku:'',cantidad:1}); renderInventario(); }
+function eliminarInv(id){ inventarioList=inventarioList.filter(x=>x.id!==id); renderInventario(); }
+function renderInventario(){
+  const cont=document.getElementById('listaInventario'); if(!cont) return; cont.innerHTML='';
+  if(inventarioList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega los productos en estante.</div>'; return; }
+  inventarioList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-box"/></svg>Producto ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarInv('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoSkuCascada(p)}
+    <div class="field" style="margin-bottom:6px"><label class="label label-req">Cantidad en estante</label><input type="number" class="input" min="0" value="${p.cantidad}" oninput="setCantidadInv('${p.id}',this.value)"></div>
+    <div id="invAlerta-${p.id}">${alertaStock(p.cantidad)}</div>`; cont.appendChild(d); });
+}
+function alertaStock(cant){
+  const c=parseFloat(cant);
+  if(isNaN(c)) return '';
+  if(c<=0) return '<div class="res-mini" style="color:var(--error);font-weight:600">🔴 Agotado: 0 unidades en estante</div>';
+  if(c<=3) return '<div class="res-mini" style="color:var(--error);font-weight:600">🔴 Próximo a agotarse: quedan '+c+' und</div>';
+  if(c<=8) return '<div class="res-mini" style="color:var(--warn);font-weight:600">🟡 Inventario bajo: quedan '+c+' und, vigila reposición</div>';
+  return '';
+}
+function setCantidadInv(id,v){ setFld(id,'cantidad',v); const p=findItem(id); const el=document.getElementById('invAlerta-'+id); if(el) el.innerHTML = p?alertaStock(p.cantidad):''; }
+
+function agregarProducto(){ productosPedido.push({id:uid('p'),categoria:'',sku:'',cantidad:1,precio:0,subtotal:0}); renderPedido(); }
+function eliminarProducto(id){ productosPedido=productosPedido.filter(p=>p.id!==id); renderPedido(); calcularTotalPedido(); }
+function renderPedido(){
+  const cont=document.getElementById('listaPedido'); cont.innerHTML='';
+  if(productosPedido.length===0){ cont.innerHTML='<div class="empty-hint">Sin productos. Agrega el primero.</div>'; calcularTotalPedido(); return; }
+  productosPedido.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-package"/></svg>Producto ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarProducto('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoSkuCascada(p)}
+    <div class="field" style="margin-bottom:0"><label class="label label-req">Cantidad</label><input type="number" class="input" min="1" value="${p.cantidad}" oninput="setCant('${p.id}',this.value)"></div>
+    <div class="item-sub">Precio: <strong>$${fmt(p.precio)}</strong> · Subtotal: <strong>$${fmt(p.subtotal)}</strong></div>`; cont.appendChild(d); });
+}
+function setCant(id,v){ const p=findItem(id); if(!p)return; p.cantidad=parseFloat(v)||0; if('subtotal'in p){p.subtotal=p.cantidad*p.precio;} calcularTotalPedido(); subDOM('listaPedido',productosPedido,p); }
+function subDOM(contId,list,p){ const i=list.indexOf(p); const row=document.querySelectorAll('#'+contId+' .item')[i]; if(row){const s=row.querySelector('.item-sub'); if(s)s.innerHTML=`Precio: <strong>$${fmt(p.precio)}</strong> · Subtotal: <strong>$${fmt(p.subtotal)}</strong>`;} }
+function calcularTotalPedido(){ const t=productosPedido.reduce((s,p)=>s+p.subtotal,0); document.getElementById('totalPedido').textContent='$'+fmt(t); calcularTotalFinal(); }
+function calcularTotalFinal(){ const t=productosPedido.reduce((s,p)=>s+p.subtotal,0); const d=parseFloat(document.getElementById('descuento').value)||0; document.getElementById('totalFinal').textContent='$'+fmt(Math.max(0,t-d)); }
+
+function agregarAgotado(){ agotadosList.push({id:uid('a'),categoria:'',sku:'',cantidad:1}); renderAgotados(); }
+function eliminarAgotado(id){ agotadosList=agotadosList.filter(x=>x.id!==id); renderAgotados(); }
+function renderAgotados(){
+  const cont=document.getElementById('listaAgotados'); cont.innerHTML='';
+  if(agotadosList.length===0){ cont.innerHTML='<div class="empty-hint">Sin agotados registrados.</div>'; return; }
+  agotadosList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-xcircle"/></svg>Agotado ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarAgotado('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoSkuCascada(p)}
+    <div class="field" style="margin-bottom:0"><label class="label label-req">Cantidad próxima a agotarse</label><input type="number" class="input" min="0" value="${p.cantidad}" oninput="setFld('${p.id}','cantidad',this.value)"></div>`; cont.appendChild(d); });
+}
+
+function agregarFecha(){ fechasList.push({id:uid('f'),categoria:'',sku:'',lote:'',vence:'',cantidad:1}); renderFechas(); }
+function eliminarFecha(id){ fechasList=fechasList.filter(x=>x.id!==id); renderFechas(); }
+function renderFechas(){
+  const cont=document.getElementById('listaFechas'); cont.innerHTML='';
+  if(fechasList.length===0){ cont.innerHTML='<div class="empty-hint">Sin productos próximos a vencer.</div>'; return; }
+  fechasList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-clock"/></svg>Producto ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarFecha('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoSkuCascada(p)}
+    <div class="field-row" style="margin-bottom:0"><div class="field" style="margin-bottom:0"><label class="label label-req">Vence</label><input type="date" class="input" value="${escAttr(p.vence)}" oninput="setFld('${p.id}','vence',this.value)"></div><div class="field" style="margin-bottom:0"><label class="label">Cantidad</label><input type="number" class="input" min="1" value="${p.cantidad}" oninput="setFld('${p.id}','cantidad',this.value)"></div></div>`; cont.appendChild(d); });
+}
+
+// ===== EXHIBICIONES =====
+function onExhibicionChange(){ const v=(document.querySelector('input[name="tieneExhibicion"]:checked')||{}).value; document.getElementById('exhibicionSi').style.display=v==='Si'?'block':'none'; if(v==='Si'&&exhibicionList.length===0&&!restaurando) agregarExhibicion(); }
+function agregarExhibicion(){ exhibicionList.push({id:uid('e'),categoria:'',sku:'',cantidad:1}); renderExhibicion(); }
+function eliminarExhibicion(id){ exhibicionList=exhibicionList.filter(x=>x.id!==id); renderExhibicion(); }
+function renderExhibicion(){
+  const cont=document.getElementById('listaExhibicion'); if(!cont) return; cont.innerHTML='';
+  if(exhibicionList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega los productos en la exhibición.</div>'; return; }
+  exhibicionList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-star"/></svg>Producto ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarExhibicion('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoSkuCascada(p)}
+    <div class="field" style="margin-bottom:0"><label class="label">Cantidad de caras / facings</label><input type="number" class="input" min="1" value="${p.cantidad}" oninput="setFld('${p.id}','cantidad',this.value)"></div>`; cont.appendChild(d); });
+}
+function setFld(id,campo,v){ const p=findItem(id); if(p)p[campo]= (campo==='cantidad'?(parseFloat(v)||0):v); }
+
+// ===== CATEGORÍAS + PRODUCTO CASCADA =====
+function categoriasUnicas(){
+  const cats = parametrizacion.categorias || [...new Set((parametrizacion.skus||[]).map(s=>s.categoria||'Sin categoría'))];
+  return [...cats].sort();
+}
+function opcionesCategoria(sel){
+  return '<option value="">Categoría</option>' +
+    categoriasUnicas().map(c=>'<option value="'+escAttr(c)+'"'+(c===sel?' selected':'')+'>'+escHtml(c)+'</option>').join('');
+}
+function opcionesSkuPorCategoria(categoria, sel){
+  if(!categoria) return '<option value="">Elige una categoría primero</option>';
+  const lista=(parametrizacion.skus||[]).filter(s=>(s.categoria||'Sin categoría')===categoria);
+  return '<option value="">Seleccionar producto</option>' +
+    lista.map(s=>'<option value="'+escAttr(s.completo)+'"'+(s.completo===sel?' selected':'')+'>'+escHtml(s.completo)+'</option>').join('');
+}
+function campoSkuCascada(p){
+  return `<div class="field-row" style="margin-bottom:11px">
+    <div class="field" style="margin-bottom:0"><label class="label label-req">Categoría</label><select class="select" id="sel-cat-${p.id}" onchange="setCategoriaItem('${p.id}',this.value)">${opcionesCategoria(p.categoria)}</select></div>
+    <div class="field" style="margin-bottom:0"><label class="label label-req">Producto</label><select class="select" id="sel-prod-${p.id}" onchange="setSkuItem('${p.id}',this.value)">${opcionesSkuPorCategoria(p.categoria,p.sku)}</select></div>
+  </div>`;
+}
+function setCategoriaItem(id, valor){
+  const p=findItem(id); if(!p) return;
+  p.categoria=valor; p.sku='';
+  const sel=document.getElementById('sel-prod-'+id);
+  if(sel) sel.innerHTML=opcionesSkuPorCategoria(valor,'');
+  if('precio' in p){ p.precio=0; p.subtotal=0; calcularTotalPedido(); subDOM('listaPedido',productosPedido,p); }
+}
+// Re-render de las listas para refrescar opciones cuando llegan los SKU de la API
+function poblarSkus(){ renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalVenta(); }
+
+// ===== CASCADA GENÉRICA (Muestras / Material POP: catálogo nombre+categoría) =====
+function campoCascadaCatalogo(p, catalogo){
+  const cats=[...new Set((catalogo||[]).map(s=>s.categoria||'Sin categoría'))].sort();
+  const opcCat='<option value="">Categoría</option>'+cats.map(c=>'<option value="'+escAttr(c)+'"'+(c===p.categoria?' selected':'')+'>'+escHtml(c)+'</option>').join('');
+  const lista=(catalogo||[]).filter(s=>(s.categoria||'Sin categoría')===p.categoria);
+  const opcItem = p.categoria ? ('<option value="">Seleccionar</option>'+lista.map(s=>'<option value="'+escAttr(s.nombre)+'"'+(s.nombre===p.nombre?' selected':'')+'>'+escHtml(s.nombre)+'</option>').join('')) : '<option value="">Elige una categoría primero</option>';
+  return `<div class="field-row" style="margin-bottom:11px">
+    <div class="field" style="margin-bottom:0"><label class="label label-req">Categoría</label><select class="select" onchange="setCatGenerico('${p.id}',this.value)">${opcCat}</select></div>
+    <div class="field" style="margin-bottom:0"><label class="label label-req">Material</label><select class="select" onchange="setNombreGenerico('${p.id}',this.value)">${opcItem}</select></div>
+  </div>`;
+}
+function setCatGenerico(id, valor){ const p=findItem(id); if(!p) return; p.categoria=valor; p.nombre=''; rerenderListaDe(p); }
+function setNombreGenerico(id, valor){ const p=findItem(id); if(!p) return; p.nombre=valor; }
+function rerenderListaDe(p){
+  if(muestrasList.includes(p)) renderMuestras();
+  else if(materialPopList.includes(p)) renderMaterialPop();
+}
+
+// ===== MUESTRAS =====
+// Entrega de muestras: producto = hoja "Muestras" columna A (sin categoría) + cantidad entregada
+function agregarMuestra(){ muestrasList.push({id:uid('m'),nombre:'',cantidad:1}); renderMuestras(); }
+function eliminarMuestra(id){ muestrasList=muestrasList.filter(x=>x.id!==id); renderMuestras(); }
+function renderMuestras(){
+  const cont=document.getElementById('listaMuestras'); if(!cont) return; cont.innerHTML='';
+  if(muestrasList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega las muestras entregadas.</div>'; return; }
+  const cat=parametrizacion.muestras||[];
+  muestrasList.forEach((p,idx)=>{
+    // si el producto guardado ya no está en la hoja, se conserva como opción para no perder el dato
+    const nombres=cat.map(s=>s.nombre); if(p.nombre && nombres.indexOf(p.nombre)===-1) nombres.push(p.nombre);
+    const opts='<option value="">Seleccionar producto</option>'+nombres.map(n=>'<option value="'+escAttr(n)+'"'+(n===p.nombre?' selected':'')+'>'+escHtml(n)+'</option>').join('');
+    const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-image"/></svg>Muestra ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarMuestra('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    <div class="field"><label class="label label-req">Producto de la muestra</label><select class="select" onchange="setNombreGenerico('${p.id}',this.value)">${opts}</select></div>
+    <div class="field" style="margin-bottom:0"><label class="label label-req">Cantidad de muestras entregadas</label><input type="number" class="input" min="1" value="${p.cantidad}" oninput="setFld('${p.id}','cantidad',this.value)"></div>`; cont.appendChild(d); });
+}
+
+// ===== MATERIAL POP (entregado) =====
+function agregarMaterialPop(){ materialPopList.push({id:uid('mp'),categoria:'',nombre:'',cantidad:1}); renderMaterialPop(); }
+function eliminarMaterialPop(id){ materialPopList=materialPopList.filter(x=>x.id!==id); renderMaterialPop(); }
+function renderMaterialPop(){
+  const cont=document.getElementById('listaMaterialPop'); if(!cont) return; cont.innerHTML='';
+  if(materialPopList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega el material POP entregado.</div>'; return; }
+  materialPopList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-upload"/></svg>Material ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarMaterialPop('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoCascadaCatalogo(p, parametrizacion.materialPOPCat)}
+    <div class="field" style="margin-bottom:0"><label class="label label-req">Cantidad</label><input type="number" class="input" min="1" value="${p.cantidad}" oninput="setFld('${p.id}','cantidad',this.value)"></div>`; cont.appendChild(d); });
+}
+
+// ===== CHEQUEO DE PRECIOS (propio + competencia) =====
+const TIPOS_PRECIO_CHK = ['Regular','Descuento','Promoción','Oferta'];
+function agregarChequeo(){ chequeoList.push({id:uid('c'),categoria:'',sku:'',precio:'',tipoPrecio:'Regular'}); renderChequeo(); }
+function eliminarChequeo(id){ chequeoList=chequeoList.filter(x=>x.id!==id); renderChequeo(); }
+function setPrecioChequeo(id,v){ const p=chequeoList.find(x=>x.id===id); if(!p) return; p.precio=v; const el=document.getElementById('chkEstado-'+id); if(el) el.innerHTML=estadoChequeoHtml(p); }
+function setTipoPrecioChequeo(id,v){ const p=chequeoList.find(x=>x.id===id); if(p) p.tipoPrecio=v; }
+function rangoChequeo(p){
+  const ref=precioRefSku(p.sku); const val=parseFloat(p.precio);
+  if(!ref || !p.sku || isNaN(val)) return null;
+  const min=ref*0.9, max=ref*1.1;
+  return { ref, ok: (val>=min && val<=max), min, max };
+}
+function estadoChequeoHtml(p){
+  if(!p.sku) return '';
+  const ref=precioRefSku(p.sku);
+  if(!ref) return '';
+  let h='<div class="res-mini">Precio sugerido: <b>$'+fmt(ref)+'</b></div>';
+  const r=rangoChequeo(p);
+  if(r) h += r.ok
+    ? '<div class="res-mini" style="color:var(--success);font-weight:600">✓ Dentro del rango (±10%) [$'+fmt(r.min)+' - $'+fmt(r.max)+']</div>'
+    : '<div class="res-mini" style="color:var(--error);font-weight:600">✗ Fuera de rango (±10%) [$'+fmt(r.min)+' - $'+fmt(r.max)+']</div>';
+  return h;
+}
+function agregarCompetencia(){ chequeoCompList.push({id:uid('cc'),producto:'',valor:'',tipo:'Normal'}); renderChequeo(); }
+function eliminarCompetencia(id){ chequeoCompList=chequeoCompList.filter(x=>x.id!==id); renderChequeo(); }
+function setCompFld(id,campo,v){ const p=chequeoCompList.find(x=>x.id===id); if(p) p[campo]=v; }
+function renderChequeo(){
+  const contP=document.getElementById('listaChequeo'); const contC=document.getElementById('listaCompetencia');
+  if(!contP || !contC) return;
+  contP.innerHTML='';
+  if(chequeoList.length===0){ contP.innerHTML='<div class="empty-hint">Agrega un producto para chequear su precio.</div>'; }
+  chequeoList.forEach((p,idx)=>{
+    const d=document.createElement('div'); d.className='item';
+    d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-alert"/></svg>Chequeo ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarChequeo('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoSkuCascada(p)}
+    <div class="field" style="margin-bottom:8px"><label class="label label-req">Precio encontrado en el PDV <span class="label-hint">$1.000 – $99.999</span></label><input type="number" class="input" min="1000" max="99999" step="50" placeholder="Ej: 20000" value="${escAttr(p.precio)}" oninput="setPrecioChequeo('${p.id}',this.value)"></div>
+    <div class="field" style="margin-bottom:8px"><label class="label label-req">Tipo de precio</label>
+      <select class="select" onchange="setTipoPrecioChequeo('${p.id}',this.value)">
+        <option value="">Seleccionar tipo</option>
+        ${TIPOS_PRECIO_CHK.map(t=>`<option value="${t}"${p.tipoPrecio===t?' selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+    <div id="chkEstado-${p.id}">${estadoChequeoHtml(p)}</div>`;
+    contP.appendChild(d);
+  });
+  contC.innerHTML='';
+  if(chequeoCompList.length===0){ contC.innerHTML='<div class="empty-hint">Agrega un producto de la competencia.</div>'; }
+  chequeoCompList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-cart"/></svg>Competencia ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarCompetencia('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    <div class="field"><label class="label label-req">Producto de la competencia</label><input type="text" class="input" placeholder="Nombre del producto" value="${escAttr(p.producto)}" oninput="setCompFld('${p.id}','producto',this.value)"></div>
+    <div class="field-row" style="margin-bottom:0">
+      <div class="field" style="margin-bottom:0"><label class="label label-req">Valor</label><input type="number" class="input" min="0" placeholder="Ej: 4500" value="${escAttr(p.valor)}" oninput="setCompFld('${p.id}','valor',this.value)"></div>
+      <div class="field" style="margin-bottom:0"><label class="label">Condición</label><select class="select" onchange="setCompFld('${p.id}','tipo',this.value)">
+        <option value="Normal"${p.tipo==='Normal'?' selected':''}>Precio normal</option>
+        <option value="Promoción"${p.tipo==='Promoción'?' selected':''}>Promoción</option>
+        <option value="2x1"${p.tipo==='2x1'?' selected':''}>2x1</option>
+      </select></div>
+    </div>`; contC.appendChild(d); });
+}
+// Guarda el SKU elegido en el item (y precio si es pedido o venta)
+function setSkuItem(id, valor){
+  const p=findItem(id); if(!p) return;
+  p.sku=valor;
+  const m=(parametrizacion.skus||[]).find(s=>s.completo===valor);
+  if(productosPedido.includes(p)){
+    if(m) p.precio=m.precio||0;
+    p.subtotal=p.cantidad*(p.precio||0);
+    subDOM('listaPedido',productosPedido,p);
+    calcularTotalPedido();
+  } else if(ventasList.includes(p)){
+    if(m) p.precio=m.precio||0;
+    p.subtotal=p.cantidad*(p.precio||0);
+    subDOM('listaVentas',ventasList,p);
+    calcularTotalVenta();
+  } else if(chequeoList.includes(p)){
+    renderChequeo();
+  }
+}
+function precioRefSku(sku){ const m=(parametrizacion.skus||[]).find(s=>s.completo===sku); return m?(m.precio||0):0; }
+
+function uid(pfx){ return pfx+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,6); }
+function escAttr(s){ return String(s==null?'':s).replace(/"/g,'&quot;'); }
+function escHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmt(n){ return Number(n||0).toLocaleString('es-CO',{maximumFractionDigits:2}); }
+
+// ===== FOTOS =====
+function leerFoto(e,tipo,slot){
+  const file=e.target.files[0]; if(!file) return;
+  if(file.size>25*1024*1024){ alert('La imagen es muy pesada (más de 25 MB).'); e.target.value=''; return; }
+  comprimirImagen(file, tipo==='perfil'?700:1280, 0.7, data=>{
+    if(!data){
+      alert('No se pudo procesar la foto (memoria insuficiente en el dispositivo). Cierra otras apps/pestañas e intenta de nuevo, o toma la foto con menos resolución.');
+      e.target.value='';
+      return;
+    }
+    aplicarFoto(tipo, data, slot); persistir(); persistirFotos();
+  });
+}
+// Redimensiona y comprime la foto SIN pasar antes por base64 completo (evita quedarse sin memoria en celulares
+// al capturar fotos de la cámara en alta resolución). Usa createImageBitmap cuando está disponible (más eficiente);
+// si no, hace fallback al método clásico <img>+canvas con un object URL temporal.
+function comprimirImagen(archivo, maxLado, calidad, cb){
+  const previoBitmap = window.createImageBitmap ? createImageBitmap(archivo).catch(()=>null) : Promise.resolve(null);
+  previoBitmap.then(bitmap=>{
+    if(bitmap){
+      try{
+        let w=bitmap.width, h=bitmap.height; const m=Math.max(w,h);
+        if(m>maxLado){ const esc=maxLado/m; w=Math.round(w*esc); h=Math.round(h*esc); }
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        c.getContext('2d').drawImage(bitmap,0,0,w,h);
+        if(bitmap.close) bitmap.close();
+        cb(c.toDataURL('image/jpeg', calidad));
+        return;
+      }catch(err){ /* sigue al fallback de abajo */ }
+    }
+    comprimirImagenFallback(archivo, maxLado, calidad, cb);
+  });
+}
+function comprimirImagenFallback(archivo, maxLado, calidad, cb){
+  const esBlob = typeof archivo !== 'string';
+  const url = esBlob ? URL.createObjectURL(archivo) : archivo;
+  const img=new Image();
+  img.onload=function(){
+    if(esBlob) URL.revokeObjectURL(url);
+    let w=img.width, h=img.height; const m=Math.max(w,h);
+    if(m>maxLado){ const esc=maxLado/m; w=Math.round(w*esc); h=Math.round(h*esc); }
+    try{
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg', calidad));
+    }catch(err){ cb(null); }
+  };
+  img.onerror=function(){ if(esBlob) URL.revokeObjectURL(url); cb(null); };
+  img.src=url;
+}
+function quitarFoto(tipo, slot){
+  if(tipo==='antes'){
+    fotosAntes[slot]=''; fotosAntesURL[slot]=''; renderFotoSlots('antes');
+  } else if(tipo==='despues'){
+    fotosDespues[slot]=''; fotosDespuesURL[slot]=''; renderFotoSlots('despues');
+  } else if(tipo==='exhibicion'){
+    fotoExhibicion=''; fotoExhibicionURL=''; document.getElementById('fileExhibicion').value='';
+    document.getElementById('defExhibicion').style.display='block'; document.getElementById('prevExhibicion').style.display='none'; document.getElementById('uploadExhibicion').classList.remove('has');
+  }
+  persistir(); persistirFotos();
+}
+
+// ===== RESUMEN =====
+function renderResumen(){
+  const cont=document.getElementById('resumenContenido');
+  const totalPed=productosPedido.reduce((s,p)=>s+p.subtotal,0);
+  const desc=parseFloat(document.getElementById('descuento').value)||0;
+  const ventaR=(document.querySelector('input[name="ventaRealizada"]:checked')||{}).value||'';
+  const pop=(document.querySelector('input[name="materialPOP"]:checked')||{}).value||'';
+  const promos=Array.from(document.querySelectorAll('input[id^="promo"]:checked')).map(c=>c.value);
+  const ubic=(ubicacion.lat&&ubicacion.lng)?'<a href="https://www.google.com/maps?q='+ubicacion.lat+','+ubicacion.lng+'" target="_blank">Abrir en Maps</a> ('+ubicacion.lat+', '+ubicacion.lng+')':'No capturada';
+
+  let h='';
+  h+=sec('i-user','Mercaderista',[ ln('Nombre',escHtml(val('nombreMercaderista'))||'—'), ln('Documento',escHtml(val('cedulaMercaderista'))||'—'), ln('Teléfono',escHtml(val('telefono'))||'—'), ln('Selfie',(fotoPerfil||fotoPerfilURL)?'Tomada ✓':'—'), ln('Código de sesión',escHtml(registroId)||'—') ]);
+  h+=sec('i-pin','Punto de venta',[ ln('Ciudad',escHtml(getCiudad())||'—'), ln('PDV',escHtml(getPDV())||'—'), ln('Ubicación',ubic) ]);
+
+  let vH='<div class="res-line"><span class="rk">¿Se realizó venta?</span><span class="rv">'+(ventaR||'—')+'</span></div>';
+  if(ventaR==='No') vH+='<div class="res-line"><span class="rk">Motivo</span><span class="rv">'+(escHtml(val('ventaMotivoNo'))||'—')+'</span></div>';
+  if(ventaR==='Si'){
+    vH+=(ventasList.length?ventasList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b> · '+(p.cantidad||0)+' und · $'+fmt(p.subtotal||0)+'</div>').join(''):'<div class="res-mini">Sin productos vendidos</div>');
+    vH+='<div class="res-line"><span class="rk">Total venta</span><span class="rv">$'+fmt(totalVentaValor())+'</span></div>';
+    vH+='<div class="res-line"><span class="rk">Kits entregados</span><span class="rv">'+(val('kitsEntregados')||'—')+'</span></div>';
+    vH+='<div class="res-line"><span class="rk">Recipientes entregados</span><span class="rv">'+(val('recipientesEntregados')||'—')+'</span></div>';
+  }
+  h+=secRaw('i-cart','Ventas',vH);
+
+  let iH='<div class="res-line"><span class="rk">Material POP</span><span class="rv">'+(pop||'—')+'</span></div>';
+  iH+=(inventarioList.length?inventarioList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b>'+(p.categoria?' ['+escHtml(p.categoria)+']':'')+' · '+(p.cantidad||0)+' en estante</div>').join(''):'<div class="res-mini">Sin inventario registrado</div>');
+  h+=secRaw('i-box','Inventario',iH);
+
+  const tieneEx=(document.querySelector('input[name="tieneExhibicion"]:checked')||{}).value||'';
+  let exH='<div class="res-line"><span class="rk">¿Exhibición adicional?</span><span class="rv">'+(tieneEx||'—')+'</span></div>';
+  if(tieneEx==='Si'){
+    exH+='<div class="res-line"><span class="rk">Tipo</span><span class="rv">'+(escHtml(val('tipoExhibicion'))||'—')+'</span></div>';
+    exH+=(exhibicionList.length?exhibicionList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b>'+(p.categoria?' ['+escHtml(p.categoria)+']':'')+' · '+(p.cantidad||0)+' cara(s)</div>').join(''):'<div class="res-mini">Sin productos en la exhibición</div>');
+    exH+=ln('Foto',((fotoExhibicion||fotoExhibicionURL)?(fotoExhibicionURL?'<a href="'+fotoExhibicionURL+'" target="_blank">Ver foto</a>':'Tomada ✓'):'—'));
+  }
+  h+=secRaw('i-star','Exhibición adicional',exH);
+
+  const agH = agotadosList.length ? agotadosList.map((a,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(a.sku)||'—')+'</b> · '+(a.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin agotados registrados</div>';
+  h+=secRaw('i-xcircle','Agotados ('+agotadosList.length+')', agH);
+
+  const fcH = fechasList.length ? fechasList.map((f,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(f.sku)||'—')+'</b> · vence '+(f.vence||'—')+' · '+(f.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin productos por vencer</div>';
+  h+=secRaw('i-clock','Fechas cortas ('+fechasList.length+')', fcH);
+
+  let pedH = productosPedido.length ? productosPedido.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b> · '+p.cantidad+' × $'+fmt(p.precio)+' = <b>$'+fmt(p.subtotal)+'</b></div>').join('') : '<div class="res-mini">Sin productos en el pedido</div>';
+  pedH+='<div class="res-line" style="margin-top:8px"><span class="rk">Subtotal</span><span class="rv">$'+fmt(totalPed)+'</span></div>';
+  pedH+='<div class="res-line"><span class="rk">Descuento</span><span class="rv">$'+fmt(desc)+'</span></div>';
+  pedH+='<div class="res-line"><span class="rk">Total final</span><span class="rv">$'+fmt(Math.max(0,totalPed-desc))+'</span></div>';
+  if(promos.length) pedH+='<div class="res-mini">Promociones: '+escHtml(promos.join(', '))+'</div>';
+  h+=secRaw('i-package','Sugerido ('+productosPedido.length+' productos)', pedH);
+
+  const muH = muestrasList.length ? muestrasList.map((m,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(m.nombre)||'—')+'</b>'+(m.categoria?' ['+escHtml(m.categoria)+']':'')+' · '+(m.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin muestras registradas</div>';
+  h+=secRaw('i-image','Muestras ('+muestrasList.length+')', muH);
+
+  const mpH = materialPopList.length ? materialPopList.map((m,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(m.nombre)||'—')+'</b>'+(m.categoria?' ['+escHtml(m.categoria)+']':'')+' · '+(m.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin material POP registrado</div>';
+  h+=secRaw('i-upload','Material POP ('+materialPopList.length+')', mpH);
+
+  let chH = chequeoList.length ? chequeoList.map((c,i)=>{ const r=rangoChequeo(c); const tag=r?(r.ok?' ✓ dentro de rango':' ✗ fuera de rango'):''; const tp=c.tipoPrecio?' <span style="color:var(--navy);font-weight:600">['+escHtml(c.tipoPrecio)+']</span>':''; return '<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(c.sku)||'—')+'</b>'+tp+' · $'+fmt(c.precio||0)+tag+'</div>'; }).join('') : '<div class="res-mini">Sin chequeos propios</div>';
+  chH += chequeoCompList.length ? chequeoCompList.map((c,i)=>'<div class="res-mini">Competencia '+(i+1)+'. <b>'+(escHtml(c.producto)||'—')+'</b> · $'+fmt(c.valor||0)+' · '+escHtml(c.tipo||'Normal')+'</div>').join('') : '<div class="res-mini">Sin chequeos de competencia</div>';
+  h+=secRaw('i-alert','Chek de Precios', chH);
+
+  const nAntes=fotosAntes.map((v,i)=>v||fotosAntesURL[i]).filter(Boolean).length;
+  const nDespues=fotosDespues.map((v,i)=>v||fotosDespuesURL[i]).filter(Boolean).length;
+  const linksAntes=fotosAntes.map((v,i)=>fotosAntesURL[i]?'<a href="'+fotosAntesURL[i]+'" target="_blank">'+(i+1)+'</a>':(v?(i+1)+'✓':'')).filter(Boolean).join(' · ')||'—';
+  const linksDespues=fotosDespues.map((v,i)=>fotosDespuesURL[i]?'<a href="'+fotosDespuesURL[i]+'" target="_blank">'+(i+1)+'</a>':(v?(i+1)+'✓':'')).filter(Boolean).join(' · ')||'—';
+  h+=sec('i-camera','Fotos (estante)',[
+    ln('Antes ('+nAntes+'/3)', linksAntes),
+    ln('Después ('+nDespues+'/3)', linksDespues)
+  ]);
+
+  h+='<div class="res-sec-h" style="margin-top:4px"><svg class="icon icon-sm"><use href="#i-list"/></svg>Estado de módulos</div>';
+  h+=MODS.filter(m=>m.id!=='resumen').map(m=>'<div class="mod-state"><div class="ms-ic"><svg class="icon icon-sm"><use href="#'+m.icon+'"/></svg></div><div class="ms-name">'+m.label+'</div><span class="ms-tag '+(saved[m.id]?'ok':'no')+'">'+(saved[m.id]?'Guardado':'Pendiente')+'</span></div>').join('');
+  cont.innerHTML=h;
+}
+function sec(icon,titulo,lines){ return '<div class="res-sec"><div class="res-sec-h"><svg class="icon icon-sm"><use href="#'+icon+'"/></svg>'+titulo+'</div>'+lines.join('')+'</div>'; }
+function secRaw(icon,titulo,html){ return '<div class="res-sec"><div class="res-sec-h"><svg class="icon icon-sm"><use href="#'+icon+'"/></svg>'+titulo+'</div>'+html+'</div>'; }
+function ln(k,v){ return '<div class="res-line"><span class="rk">'+k+'</span><span class="rv">'+v+'</span></div>'; }
+
+// ===== GUARDADO POR MÓDULO =====
+function validarModulo(id){
+  const e=[];
+  if(id==='inicio'){
+    if(!val('nombreMercaderista')) e.push('Nombre del mercaderista');
+    if(!val('cedulaMercaderista')) e.push('Cédula');
+    if(!getCiudad()) e.push('Ciudad');
+    if(!getPDV()) e.push('Punto de venta');
+  }
+  if(id==='ventas'){
+    if(!modAvailable('ventas')) e.push('El módulo de Ventas solo está disponible los sábados');
+    const v=(document.querySelector('input[name="ventaRealizada"]:checked')||{}).value;
+    if(!v) e.push('¿Se realizó venta?');
+    if(v==='No'&&!val('ventaMotivoNo')) e.push('Motivo de no venta');
+    if(v==='Si'){
+      if(ventasList.length===0) e.push('Agrega al menos un producto vendido');
+      ventasList.forEach((p,i)=>{ if(!p.sku) e.push('SKU vendido '+(i+1)); if(!p.cantidad||p.cantidad<1) e.push('Cantidad vendido '+(i+1)); });
+      const nk=parseFloat(val('kitsEntregados')), nr=parseFloat(val('recipientesEntregados'));
+      if(val('kitsEntregados')===''||isNaN(nk)||nk<0) e.push('Kits entregados (escribe 0 si no se entregó)');
+      if(val('recipientesEntregados')===''||isNaN(nr)||nr<0) e.push('Recipientes entregados (escribe 0 si no se entregó)');
+    }
+  }
+  if(id==='inventarios'){ inventarioList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario '+(i+1)); }); }
+  if(id==='fotos'){
+    const nA=fotosAntes.map((v,i)=>v||fotosAntesURL[i]).filter(Boolean).length;
+    const nD=fotosDespues.map((v,i)=>v||fotosDespuesURL[i]).filter(Boolean).length;
+    if(nA<3) e.push('Faltan '+(3-nA)+' foto(s) ANTES (mínimo 3)');
+    if(nD<3) e.push('Faltan '+(3-nD)+' foto(s) DESPUÉS (mínimo 3)');
+  }
+  if(id==='agotados'){ agotadosList.forEach((p,i)=>{ if(!p.sku) e.push('SKU del agotado '+(i+1)); }); }
+  if(id==='fechas'){ fechasList.forEach((p,i)=>{ if(!p.sku) e.push('SKU del producto '+(i+1)); if(!p.vence) e.push('Fecha de vencimiento '+(i+1)); }); }
+  if(id==='exhibiciones'){ const v=(document.querySelector('input[name="tieneExhibicion"]:checked')||{}).value; if(!v) e.push('¿Se ganó una exhibición adicional?'); if(v==='Si'){ if(!val('tipoExhibicion')) e.push('Tipo de exhibición'); if(exhibicionList.length===0) e.push('Agrega al menos un producto exhibido'); exhibicionList.forEach((p,i)=>{ if(!p.sku) e.push('Producto exhibición '+(i+1)); }); } }
+  if(id==='pedido'){ productosPedido.forEach((p,i)=>{ if(!p.sku) e.push('SKU producto '+(i+1)); if(!p.cantidad||p.cantidad<1) e.push('Cantidad producto '+(i+1)); }); }
+  if(id==='muestras'){ muestrasList.forEach((p,i)=>{ if(!p.nombre) e.push('Producto de la muestra '+(i+1)); if(!p.cantidad||p.cantidad<1) e.push('Cantidad de la muestra '+(i+1)); }); }
+  if(id==='materialpop'){ if(!(document.querySelector('input[name="materialPOP"]:checked')||{}).value) e.push('¿Material POP en buen estado?'); materialPopList.forEach((p,i)=>{ if(!p.nombre) e.push('Material POP '+(i+1)); }); }
+  if(id==='chequeo'){
+    chequeoList.forEach((p,i)=>{
+      if(!p.sku) e.push('Producto chequeo '+(i+1));
+      const v=parseFloat(p.precio);
+      if(!p.precio || isNaN(v) || v<1000 || v>99999) e.push('Precio chequeo '+(i+1)+' debe estar entre $1.000 y $99.999');
+      if(!p.tipoPrecio) e.push('Tipo de precio chequeo '+(i+1));
+    });
+    chequeoCompList.forEach((p,i)=>{ if(!p.producto) e.push('Producto competencia '+(i+1)); if(!p.valor) e.push('Valor competencia '+(i+1)); });
+  }
+  return e;
+}
+
+function recolectarGestion(){
+  const totalPed=productosPedido.reduce((s,p)=>s+p.subtotal,0);
+  const desc=parseFloat(document.getElementById('descuento').value)||0;
+  const pop=(document.querySelector('input[name="materialPOP"]:checked')||{}).value||'';
+  const promos=Array.from(document.querySelectorAll('input[id^="promo"]:checked')).map(c=>c.value);
+  return {
+    registroId: registroId,
+    nombreMercaderista: val('nombreMercaderista'), cedulaMercaderista: val('cedulaMercaderista'), telefono: val('telefono'),
+    ciudad: getCiudad(), puntoVenta: getPDV(),
+    latitud: ubicacion.lat||'', longitud: ubicacion.lng||'', precisionGPS: ubicacion.acc||'',
+    fotoPerfil: fotoPerfil, fotoPerfilURL: fotoPerfilURL,
+    ventaRealizada: (document.querySelector('input[name="ventaRealizada"]:checked')||{}).value||'',
+    ventaMotivoNo: val('ventaMotivoNo'),
+    ventaProductos: ventasList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad,precio:p.precio,subtotal:p.subtotal})),
+    kitsEntregados: (document.querySelector('input[name="ventaRealizada"]:checked')||{}).value==='Si' ? val('kitsEntregados') : '',
+    recipientesEntregados: (document.querySelector('input[name="ventaRealizada"]:checked')||{}).value==='Si' ? val('recipientesEntregados') : '',
+    materialPOP: pop,
+    inventarioProductos: inventarioList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad})),
+    fotoAntes: fotosAntes[0]||'', fotoAntes2: fotosAntes[1]||'', fotoAntes3: fotosAntes[2]||'',
+    fotoDespues: fotosDespues[0]||'', fotoDespues2: fotosDespues[1]||'', fotoDespues3: fotosDespues[2]||'',
+    fotoAntesURL: fotosAntesURL[0]||'', fotoAntes2URL: fotosAntesURL[1]||'', fotoAntes3URL: fotosAntesURL[2]||'',
+    fotoDespuesURL: fotosDespuesURL[0]||'', fotoDespues2URL: fotosDespuesURL[1]||'', fotoDespues3URL: fotosDespuesURL[2]||'',
+    tieneExhibicionAdicional: (document.querySelector('input[name="tieneExhibicion"]:checked')||{}).value||'',
+    tipoExhibicionAdicional: val('tipoExhibicion'),
+    exhibicionAdicionalProductos: exhibicionList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad})),
+    fotoExhibicion: fotoExhibicion, fotoExhibicionURL: fotoExhibicionURL,
+    agotados: agotadosList.map(a=>({id:a.id,categoria:a.categoria,sku:a.sku,cantidad:a.cantidad})),
+    fechasCortas: fechasList.map(f=>({id:f.id,categoria:f.categoria,sku:f.sku,vence:f.vence,cantidad:f.cantidad})),
+    pedidoProductos: productosPedido.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad,precio:p.precio,subtotal:p.subtotal})),
+    pedidoTotal: totalPed, pedidoPromos: promos.join(', '), pedidoDescuento: desc, pedidoTotalFinal: Math.max(0,totalPed-desc),
+    muestrasProductos: muestrasList.map(m=>({id:m.id,nombre:m.nombre,cantidad:m.cantidad})),
+    materialPOPEntregado: materialPopList.map(m=>({id:m.id,categoria:m.categoria,nombre:m.nombre,cantidad:m.cantidad})),
+    chequeoPrecios: chequeoList.map(c=>{ const r=rangoChequeo(c); return { id:c.id, categoria:c.categoria, sku:c.sku, precioEncontrado:c.precio, tipoPrecio:c.tipoPrecio||'', precioReferencia:r?r.ref:'', dentroDelRango:r?(r.ok?'Sí':'No'):'' }; }),
+    chequeoCompetencia: chequeoCompList.map(c=>({id:c.id,producto:c.producto, valor:c.valor, tipo:c.tipo})),
+    observacionesGenerales: val('observacionesGenerales'), proximaVisita: val('proximaVisita'),
+    modulosGuardados: ''
+  };
+}
+
+async function guardarModulo(id, finalizar){
+  const errs=validarModulo(id);
+  if(errs.length>0){ alert('Completa antes de guardar:\n\n• '+errs.join('\n• ')); return; }
+  // Si el registro inicial (portada) todavía se está creando, espera a que termine para no
+  // generar una fila duplicada con un registroId distinto (eso separaba la foto de los demás datos).
+  if(registroPromise){ mostrarLoading('Guardando...'); try{ await registroPromise; }catch(e){} registroPromise=null; }
+  const eraNuevo=!registroId;
+  const gestion=recolectarGestion();
+  saved[id]=true;
+  gestion.modulosGuardados=Object.keys(saved).filter(k=>saved[k]).join(', ');
+  const enviarCorreo = (id==='pedido' && productosPedido.length>0); // al guardar pedido, enviar correo
+  mostrarLoading(finalizar?'Finalizando gestión...':(enviarCorreo?'Guardando y enviando pedido...':'Guardando '+(MODS.find(m=>m.id===id)||{}).label+'...'));
+  try{
+    const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({registroId:registroId,gestion:gestion,enviarCorreo:enviarCorreo,modulo:id,finalizar:!!finalizar}),redirect:'follow'});
+    const data=await res.json(); ocultarLoading();
+    if(data&&data.codigo==='SESION_CERRADA'){ saved[id]=false; sesionCerradaPorServidor(data.error); return; }
+    if(data&&data.success){
+      registroId=data.registroId||registroId;
+      if(eraNuevo&&registroId) mostrarCodigoSesion();
+      if(data.fotoPerfilURL){ fotoPerfilURL=data.fotoPerfilURL; fotoPerfil=''; }
+      let touched=false;
+      [['fotoAntesURL',0,'antes'],['fotoAntes2URL',1,'antes'],['fotoAntes3URL',2,'antes'],['fotoDespuesURL',0,'despues'],['fotoDespues2URL',1,'despues'],['fotoDespues3URL',2,'despues']].forEach(([key,slot,tipo])=>{
+        if(data[key]){ if(tipo==='antes'){fotosAntesURL[slot]=data[key]; fotosAntes[slot]='';} else {fotosDespuesURL[slot]=data[key]; fotosDespues[slot]='';} touched=true; }
+      });
+      if(touched){ renderFotoSlots('antes'); renderFotoSlots('despues'); }
+      if(data.fotoExhibicionURL){ fotoExhibicionURL=data.fotoExhibicionURL; fotoExhibicion=''; }
+      renderNav(); persistir();
+      if(finalizar){ mostrarExito(data); }
+      else if(enviarCorreo){ toast(data.correoEnviado?'Sugerido guardado y enviado por correo':'Sugerido guardado (correo no enviado: falta destinatario en el backend)', !data.correoEnviado); }
+      else { toast((MODS.find(m=>m.id===id)||{}).label+' guardado'); }
+      if(data.erroresFoto&&data.erroresFoto.length) alert('Los datos se guardaron, pero alguna foto no se pudo subir. Vuelve a guardar este módulo para reintentar.\n\n'+data.erroresFoto.join('\n'));
+      // Tras registrar el ingreso/inicio de gestión, se pasa directo al módulo de Ventas
+      if(id==='inicio' && !finalizar && modAvailable('ventas')) goTo('ventas'); else if(id==='inicio' && !finalizar) goTo('inventarios');
+    } else { saved[id]=false; alert('Error: '+(data&&data.error?data.error:'desconocido')); }
+  }catch(err){ saved[id]=false; ocultarLoading(); alert('Error de red: '+err.message); }
+}
+
+function toast(msg, warn){ const t=document.getElementById('toast'); document.getElementById('toastMsg').textContent=msg; t.querySelector('.icon use').setAttribute('href', warn?'#i-alert':'#i-check'); t.style.setProperty('--c', warn?'#f3b04b':'#7ef0a8'); t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),2200); }
+function mostrarLoading(m){ document.getElementById('loadingMsg').textContent=m; document.getElementById('loadingOverlay').classList.add('show'); }
+function ocultarLoading(){ document.getElementById('loadingOverlay').classList.remove('show'); }
+function mostrarExito(d){ document.getElementById('successInfo').textContent='Código de sesión: '+d.registroId+'\nGuárdalo: con él puedes volver a esta gestión durante el día (hasta las '+(HORA_CIERRE-12)+' pm).'; document.getElementById('successModal').classList.add('show'); }
+function cerrarExito(){ document.getElementById('successModal').classList.remove('show'); }
+
+// ===== COMPARTIR / WHATSAPP =====
+function generarTextoGestion(){
+  const totalPed=productosPedido.reduce((s,p)=>s+p.subtotal,0);
+  const desc=parseFloat(document.getElementById('descuento').value)||0;
+  const ventaR=(document.querySelector('input[name="ventaRealizada"]:checked')||{}).value||'';
+  const pop=(document.querySelector('input[name="materialPOP"]:checked')||{}).value||'';
+  const linea='━━━━━━━━━━━━━━';
+  let t='🧾 *GESTIÓN PQP*\n'+linea+'\n';
+  t+='👤 *'+(val('nombreMercaderista')||'-')+'*\n';
+  t+='🪪 CC '+(val('cedulaMercaderista')||'-')+'\n';
+  if(val('telefono')) t+='📞 '+val('telefono')+'\n';
+  t+='🔑 Código de sesión: '+(registroId||'-')+'\n';
+  t+='📍 '+(getCiudad()||'-')+' · '+(getPDV()||'-')+'\n';
+  if(ubicacion.lat&&ubicacion.lng) t+='🗺️ https://www.google.com/maps?q='+ubicacion.lat+','+ubicacion.lng+'\n';
+  t+='\n🛒 *VENTAS:* '+(ventaR||'-')+'\n';
+  if(ventaR==='No') t+='   ↳ Motivo: '+(val('ventaMotivoNo')||'-')+'\n';
+  if(ventaR==='Si'){
+    ventasList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _x'+(p.cantidad||0)+'_ → $'+fmt(p.subtotal||0)+'\n'; });
+    t+='   Total venta: $'+fmt(totalVentaValor())+'\n';
+    t+='   🎁 Kits entregados: '+(val('kitsEntregados')||'0')+' · Recipientes: '+(val('recipientesEntregados')||'0')+'\n';
+  }
+  t+='\n📦 *INVENTARIO*  (POP: '+(pop||'-')+')\n';
+  if(inventarioList.length) inventarioList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _'+(p.cantidad||0)+' und_\n'; }); else t+='   • -\n';
+  const tieneEx2=(document.querySelector('input[name="tieneExhibicion"]:checked')||{}).value||'';
+  if(tieneEx2==='Si'){ t+='\n🏆 *EXHIBICIÓN ADICIONAL* ('+(val('tipoExhibicion')||'-')+')\n'; exhibicionList.forEach(p=>{ t+='   • '+(p.sku||'-')+(p.categoria?' ['+p.categoria+']':'')+' _x'+(p.cantidad||0)+'_\n'; }); }
+  if(agotadosList.length){ t+='\n⚠️ *AGOTADOS*\n'; agotadosList.forEach(a=>{ t+='   • '+(a.sku||'-')+'  _x'+(a.cantidad||0)+'_\n'; }); }
+  if(fechasList.length){ t+='\n⏰ *FECHAS CORTAS*\n'; fechasList.forEach(f=>{ t+='   • '+(f.sku||'-')+'  _vence '+(f.vence||'-')+' · x'+(f.cantidad||0)+'_\n'; }); }
+  if(muestrasList.length){ t+='\n🧪 *MUESTRAS*\n'; muestrasList.forEach(m=>{ t+='   • '+(m.nombre||'-')+(m.categoria?' ['+m.categoria+']':'')+'  _x'+(m.cantidad||0)+'_\n'; }); }
+  if(materialPopList.length){ t+='\n🗂️ *MATERIAL POP*\n'; materialPopList.forEach(m=>{ t+='   • '+(m.nombre||'-')+(m.categoria?' ['+m.categoria+']':'')+'  _x'+(m.cantidad||0)+'_\n'; }); }
+  if(chequeoList.length){ t+='\n🏷️ *CHEK DE PRECIOS*\n'; chequeoList.forEach(c=>{ const r=rangoChequeo(c); const tag=r?(r.ok?'✅ dentro de rango':'⚠️ fuera de rango'):''; t+='   • '+(c.sku||'-')+(c.tipoPrecio?' ('+c.tipoPrecio+')':'')+'  $'+fmt(c.precio||0)+(tag?' _('+tag+')_':'')+'\n'; }); }
+  if(chequeoCompList.length){ t+='\n🛍️ *CHEK COMPETENCIA*\n'; chequeoCompList.forEach(c=>{ t+='   • '+(c.producto||'-')+'  $'+fmt(c.valor||0)+'  _('+(c.tipo||'Normal')+')_\n'; }); }
+  if(productosPedido.length){ t+='\n🧮 *SUGERIDO*\n'; productosPedido.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _x'+p.cantidad+'_ → $'+fmt(p.subtotal)+'\n'; }); t+=linea+'\n💰 *TOTAL: $'+fmt(Math.max(0,totalPed-desc))+'*\n'; }
+  if(val('proximaVisita')) t+='\n📅 Próxima visita: '+val('proximaVisita')+'\n';
+  if(val('observacionesGenerales')) t+='📝 '+val('observacionesGenerales')+'\n';
+  t+='\n_Enviado desde Captura PQP_';
+  return t;
+}
+function compartirWhatsApp(){ window.open('https://wa.me/?text='+encodeURIComponent(generarTextoGestion()),'_blank'); }
+function copiarGestion(){
+  const t=generarTextoGestion();
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(()=>toast('Copiado al portapapeles')).catch(()=>fallbackCopy(t)); }
+  else fallbackCopy(t);
+}
+function fallbackCopy(t){ const ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.focus(); ta.select(); try{ document.execCommand('copy'); toast('Copiado al portapapeles'); }catch(e){ prompt('Copia manual:', t); } document.body.removeChild(ta); }
+
+function nuevaGestion(){ limpiarSesionLocal(); location.reload(); }
+function val(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+</script>
+</body>
+</html>
