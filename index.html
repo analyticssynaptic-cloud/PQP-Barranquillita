@@ -472,15 +472,23 @@
         <div class="total-card">
           <div class="total-row"><span class="total-lbl">Total venta</span><span class="total-val" id="totalVenta">$0</span></div>
         </div>
-        <div id="kitSeccion" style="margin-top:16px">
-          <div class="alert alert-warn" id="kitAviso" style="display:none"><svg class="icon"><use href="#i-star"/></svg><div><strong>Esta compra aplica para el kit.</strong><div style="margin-top:2px">Kit: <span id="kitContenido"></span></div></div></div>
-          <div class="field-row">
-            <div class="field"><label class="label label-req" for="kitsEntregados">Kits entregados</label><input type="number" id="kitsEntregados" class="input" min="0" inputmode="numeric" placeholder="0 si no se entregó"></div>
-            <div class="field"><label class="label label-req" for="recipientesEntregados">Recipientes entregados</label><input type="number" id="recipientesEntregados" class="input" min="0" inputmode="numeric" placeholder="0 si no se entregó"></div>
-          </div>
-        </div>
       </div>
       <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('ventas')"><svg class="icon"><use href="#i-save"/></svg>Guardar Ventas</button></div>
+    </div>
+  </section>
+
+  <!-- PREMIOS -->
+  <section class="mod" data-mod="premios">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-star"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Premios</div><div class="card-sub">Kit o recipiente entregado</div></div>
+        <span class="saved-badge" id="badge-premios"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div class="alert alert-warn" id="kitAviso" style="display:none"><svg class="icon"><use href="#i-star"/></svg><div><strong>La compra aplica para el kit.</strong><div style="margin-top:2px">Kit: <span id="kitContenido"></span></div></div></div>
+      <div id="listaPremios"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarPremio()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar premio entregado</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('premios')"><svg class="icon"><use href="#i-save"/></svg>Guardar Premios</button></div>
     </div>
   </section>
 
@@ -696,22 +704,12 @@
 <!-- FLOWER -->
 <div class="flower-bd" id="flowerBd" onclick="closeFlower()"></div>
 <div class="flower" id="flower">
-  <!-- Fila lejana (paso 1-6 de la ruta), con curva tipo abanico -->
-  <button class="petal" data-mod="inicio"       style="--x:-150px;--y:-150px"><span class="petal-ic"><svg><use href="#i-pin"/></svg></span><span class="petal-lbl">Inicio</span></button>
-  <button class="petal" data-mod="inventarios"  style="--x:-90px;--y:-173px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inventario</span></button>
-  <button class="petal" data-mod="fotos"        style="--x:-30px;--y:-185px"><span class="petal-ic"><svg><use href="#i-camera"/></svg></span><span class="petal-lbl">Fotos</span></button>
-  <button class="petal" data-mod="ventas"       style="--x:30px;--y:-185px"><span class="petal-ic"><svg><use href="#i-cart"/></svg></span><span class="petal-lbl">Ventas</span></button>
-  <button class="petal" data-mod="exhibiciones" style="--x:90px;--y:-173px"><span class="petal-ic"><svg><use href="#i-star"/></svg></span><span class="petal-lbl">Exhibición</span></button>
-  <button class="petal" data-mod="agotados"     style="--x:150px;--y:-150px"><span class="petal-ic"><svg><use href="#i-xcircle"/></svg></span><span class="petal-lbl">Agotados</span></button>
-  <!-- Fila cercana (paso 7-12 de la ruta), misma curva más cerca del fab -->
-  <button class="petal" data-mod="fechas"       style="--x:-150px;--y:-66px"><span class="petal-ic"><svg><use href="#i-clock"/></svg></span><span class="petal-lbl">Fechas</span></button>
-  <button class="petal" data-mod="muestras"     style="--x:-90px;--y:-80px"><span class="petal-ic"><svg><use href="#i-image"/></svg></span><span class="petal-lbl">Muestras</span></button>
-  <button class="petal" data-mod="materialpop"  style="--x:-30px;--y:-87px"><span class="petal-ic"><svg><use href="#i-upload"/></svg></span><span class="petal-lbl">Mat. POP</span></button>
-  <button class="petal" data-mod="chequeo"      style="--x:30px;--y:-87px"><span class="petal-ic"><svg><use href="#i-alert"/></svg></span><span class="petal-lbl">Chek Precio</span></button>
-  <button class="petal" data-mod="pedido"       style="--x:90px;--y:-80px"><span class="petal-ic"><svg><use href="#i-package"/></svg></span><span class="petal-lbl">Sugerido</span></button>
-  <button class="petal" data-mod="resumen"      style="--x:150px;--y:-66px"><span class="petal-ic"><svg><use href="#i-list"/></svg></span><span class="petal-lbl">Resumen</span></button>
-  <!-- Fila superior: Inventario Inicial vs Final -->
-  <button class="petal" data-mod="invcomp"      style="--x:0px;--y:-280px"><span class="petal-ic"><svg><use href="#i-refresh"/></svg></span><span class="petal-lbl">Inv. Ini/Fin</span></button>
+  <button class="petal" data-mod="inicio"      style="--x:-150px;--y:-120px"><span class="petal-ic"><svg><use href="#i-pin"/></svg></span><span class="petal-lbl">Ingreso</span></button>
+  <button class="petal" data-mod="inventarios" style="--x:-90px;--y:-163px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inventario</span></button>
+  <button class="petal" data-mod="ventas"      style="--x:-30px;--y:-185px"><span class="petal-ic"><svg><use href="#i-cart"/></svg></span><span class="petal-lbl">Ventas</span></button>
+  <button class="petal" data-mod="muestras"    style="--x:30px;--y:-185px"><span class="petal-ic"><svg><use href="#i-image"/></svg></span><span class="petal-lbl">Muestras</span></button>
+  <button class="petal" data-mod="premios"     style="--x:90px;--y:-163px"><span class="petal-ic"><svg><use href="#i-star"/></svg></span><span class="petal-lbl">Premios</span></button>
+  <button class="petal" data-mod="resumen"     style="--x:150px;--y:-120px"><span class="petal-ic"><svg><use href="#i-list"/></svg></span><span class="petal-lbl">Resumen</span></button>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -801,25 +799,18 @@ const KIT_CONTENIDO = 'Detergente polvo 125 g + Detergente líquido 110 g + Suav
 const VENTAS_SOLO_SABADO = false;
 function diaClave(ms){ const d=new Date(ms||Date.now()); return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2); }
 
-// Orden = ruta lógica de la visita: llegada, inventario, fotos, ventas, exhibición, agotados, fechas, muestras, POP, chequeo, sugerido, resumen
+// Orden = ruta de la visita: ingreso, inventarios, ventas, muestras, premios, resumen
 const MODS = [
-  {id:'inicio',       icon:'i-pin',     label:'Inicio'},
+  {id:'inicio',       icon:'i-pin',     label:'Ingreso'},
   {id:'inventarios',  icon:'i-box',     label:'Inventarios'},
-  {id:'fotos',        icon:'i-camera',  label:'Fotos'},
   {id:'ventas',       icon:'i-cart',    label:'Ventas'},
-  {id:'exhibiciones', icon:'i-star',    label:'Exhibición'},
-  {id:'agotados',     icon:'i-xcircle', label:'Agotados'},
-  {id:'fechas',       icon:'i-clock',   label:'Fechas cortas'},
   {id:'muestras',     icon:'i-image',   label:'Entrega muestras'},
-  {id:'materialpop',  icon:'i-upload',  label:'Material POP'},
-  {id:'chequeo',      icon:'i-alert',   label:'Chek Precios'},
-  {id:'invcomp',      icon:'i-refresh', label:'Inv. Inicial/Final'},
-  {id:'pedido',       icon:'i-package', label:'Sugerido'},
+  {id:'premios',      icon:'i-star',    label:'Premios'},
   {id:'resumen',      icon:'i-list',    label:'Resumen'}
 ];
 
 let parametrizacion = { ciudadesPDV:{}, skus:[], muestras:[], materialPOPCat:[] };
-let muestrasList = [], materialPopList = [], chequeoList = [], chequeoCompList = [], invCompList = [];
+let muestrasList = [], materialPopList = [], chequeoList = [], chequeoCompList = [], invCompList = [], premiosList = [];
 let modoManual = false;
 let registroId = '';
 let saved = {};
@@ -1065,8 +1056,8 @@ function aplicarGestionRemota(registroIdRecuperado, g){
   else { aplicarPendCiudadPDV(); }
   const darId=list=>(list||[]).map(it=>Object.assign({id:uid('r')},it));
   productosPedido=darId(g.pedidoProductos); agotadosList=darId(g.agotados); fechasList=darId(g.fechasCortas); ventasList=darId(g.ventaProductos); inventarioList=darId(g.inventarioProductos); exhibicionList=darId(g.exhibicionAdicionalProductos);
-  muestrasList=darId(g.muestrasProductos); materialPopList=darId(g.materialPOPEntregado); chequeoList=darId(g.chequeoPrecios); chequeoCompList=darId(g.chequeoCompetencia); invCompList=darId(g.inventarioComparativo);
-  renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
+  muestrasList=darId(g.muestrasProductos); materialPopList=darId(g.materialPOPEntregado); chequeoList=darId(g.chequeoPrecios); chequeoCompList=darId(g.chequeoCompetencia); invCompList=darId(g.inventarioComparativo); premiosList=darId(g.premiosEntregados);
+  renderPremios(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
   fotoPerfil=''; fotoPerfilURL=g.fotoPerfilURL||'';
   if(fotoPerfilURL){ const box=document.getElementById('fotoIngresoBox'); if(box){ box.classList.add('has'); document.getElementById('fiTitle').textContent='Selfie lista ✓'; document.getElementById('fiSub').textContent='Toca para volver a tomar'; } }
   fotoExhibicionURL=g.fotoExhibicionURL||'';
@@ -1163,7 +1154,7 @@ function persistir(){
   try{
     const campos=recolectarGestion(); campos.fotoPerfil=''; campos.fotoExhibicion='';
     ['fotoAntes','fotoAntes2','fotoAntes3','fotoDespues','fotoDespues2','fotoDespues3'].forEach(k=>campos[k]='');
-    const data={ loggedIn:true, guardadoEn:Date.now(), registroId, saved, current, ubicacion, fotosAntesURL, fotosDespuesURL, fotoExhibicionURL, campos, listas:{ productosPedido, agotadosList, fechasList, ventasList, inventarioList, exhibicionList, muestrasList, materialPopList, chequeoList, chequeoCompList, invCompList } };
+    const data={ loggedIn:true, guardadoEn:Date.now(), registroId, saved, current, ubicacion, fotosAntesURL, fotosDespuesURL, fotoExhibicionURL, campos, listas:{ productosPedido, agotadosList, fechasList, ventasList, inventarioList, exhibicionList, muestrasList, materialPopList, chequeoList, chequeoCompList, invCompList, premiosList } };
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   }catch(e){}
 }
@@ -1201,7 +1192,7 @@ function restaurarSesion(){
   // Listas
   const L=d.listas||{};
   productosPedido=L.productosPedido||[]; agotadosList=L.agotadosList||[]; fechasList=L.fechasList||[]; ventasList=L.ventasList||[]; inventarioList=L.inventarioList||[]; exhibicionList=L.exhibicionList||[];
-  muestrasList=L.muestrasList||[]; materialPopList=L.materialPopList||[]; chequeoList=L.chequeoList||[]; chequeoCompList=L.chequeoCompList||[]; invCompList=L.invCompList||[];
+  muestrasList=L.muestrasList||[]; materialPopList=L.materialPopList||[]; chequeoList=L.chequeoList||[]; chequeoCompList=L.chequeoCompList||[]; invCompList=L.invCompList||[]; premiosList=L.premiosList||[];
   renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
   // Ubicación
   ubicacion = d.ubicacion||{lat:null,lng:null,acc:null};
@@ -1283,7 +1274,7 @@ function getPDV(){ return modoManual?document.getElementById('pdvTexto').value.t
 function onVentaChange(){ const v=(document.querySelector('input[name="ventaRealizada"]:checked')||{}).value; document.getElementById('ventaNo').style.display=v==='No'?'block':'none'; document.getElementById('ventaSi').style.display=v==='Si'?'block':'none'; if(v==='Si'&&ventasList.length===0&&!restaurando) agregarVenta(); }
 
 // ===== LISTAS (pedido / agotados / fechas) =====
-function findItem(id){ return productosPedido.find(x=>x.id===id) || agotadosList.find(x=>x.id===id) || fechasList.find(x=>x.id===id) || ventasList.find(x=>x.id===id) || inventarioList.find(x=>x.id===id) || exhibicionList.find(x=>x.id===id) || muestrasList.find(x=>x.id===id) || materialPopList.find(x=>x.id===id) || chequeoList.find(x=>x.id===id) || chequeoCompList.find(x=>x.id===id) || invCompList.find(x=>x.id===id); }
+function findItem(id){ return productosPedido.find(x=>x.id===id) || agotadosList.find(x=>x.id===id) || fechasList.find(x=>x.id===id) || ventasList.find(x=>x.id===id) || inventarioList.find(x=>x.id===id) || exhibicionList.find(x=>x.id===id) || muestrasList.find(x=>x.id===id) || materialPopList.find(x=>x.id===id) || chequeoList.find(x=>x.id===id) || chequeoCompList.find(x=>x.id===id) || invCompList.find(x=>x.id===id) || premiosList.find(x=>x.id===id); }
 
 // Ventas (categoría + SKU + cantidad + precio/subtotal, para el total de venta y la regla de Evacuador)
 function agregarVenta(){ ventasList.push({id:uid('v'),categoria:'',sku:'',cantidad:1,precio:0,subtotal:0}); renderVentas(); calcularTotalVenta(); }
@@ -1332,6 +1323,22 @@ function alertaStock(cant){
   if(c<=3) return '<div class="res-mini" style="color:var(--error);font-weight:600">🔴 Próximo a agotarse: quedan '+c+' und</div>';
   if(c<=8) return '<div class="res-mini" style="color:var(--warn);font-weight:600">🟡 Inventario bajo: quedan '+c+' und, vigila reposición</div>';
   return '';
+}
+// Premios: Kit o Recipiente + cantidad entregada
+function agregarPremio(){ premiosList.push({id:uid('pr'),tipo:'',cantidad:1}); renderPremios(); }
+function eliminarPremio(id){ premiosList=premiosList.filter(x=>x.id!==id); renderPremios(); }
+function setPremioFld(id,campo,v){ const p=premiosList.find(x=>x.id===id); if(p) p[campo]= campo==='cantidad'?(parseFloat(v)||0):v; }
+function totalPremios(tipo){ return premiosList.filter(p=>p.tipo===tipo).reduce((s,p)=>s+(p.cantidad||0),0); }
+function renderPremios(){
+  const cont=document.getElementById('listaPremios'); if(!cont) return; cont.innerHTML='';
+  calcularTotalVenta();
+  if(premiosList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega el kit o recipiente entregado.</div>'; return; }
+  premiosList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-star"/></svg>Premio ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarPremio('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    <div class="field-row">
+      <div class="field" style="margin-bottom:0"><label class="label label-req">Premio</label><select class="select" onchange="setPremioFld('${p.id}','tipo',this.value)"><option value="">Seleccionar</option><option value="Kit"${p.tipo==='Kit'?' selected':''}>Kit</option><option value="Recipiente"${p.tipo==='Recipiente'?' selected':''}>Recipiente</option></select></div>
+      <div class="field" style="margin-bottom:0"><label class="label label-req">Cantidad</label><input type="number" class="input" min="1" inputmode="numeric" value="${p.cantidad}" oninput="setPremioFld('${p.id}','cantidad',this.value)"></div>
+    </div>`; cont.appendChild(d); });
 }
 // Inventario inicial vs final (categoría + SKU + cantidad al llegar + cantidad al salir)
 function agregarInvComp(){ invCompList.push({id:uid('ic'),categoria:'',sku:'',cantidadInicial:'',cantidadFinal:''}); renderInvComp(); }
@@ -1452,7 +1459,7 @@ function setCategoriaItem(id, valor){
   if('precio' in p){ p.precio=0; p.subtotal=0; calcularTotalPedido(); subDOM('listaPedido',productosPedido,p); }
 }
 // Re-render de las listas para refrescar opciones cuando llegan los SKU de la API
-function poblarSkus(){ renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalVenta(); }
+function poblarSkus(){ renderPremios(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalVenta(); }
 
 // ===== CASCADA GENÉRICA (Muestras / Material POP: catálogo nombre+categoría) =====
 function campoCascadaCatalogo(p, catalogo){
@@ -1669,58 +1676,17 @@ function renderResumen(){
   if(ventaR==='Si'){
     vH+=(ventasList.length?ventasList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b> · '+(p.cantidad||0)+' und · $'+fmt(p.subtotal||0)+'</div>').join(''):'<div class="res-mini">Sin productos vendidos</div>');
     vH+='<div class="res-line"><span class="rk">Total venta</span><span class="rv">$'+fmt(totalVentaValor())+'</span></div>';
-    vH+='<div class="res-line"><span class="rk">Kits entregados</span><span class="rv">'+(val('kitsEntregados')||'—')+'</span></div>';
-    vH+='<div class="res-line"><span class="rk">Recipientes entregados</span><span class="rv">'+(val('recipientesEntregados')||'—')+'</span></div>';
   }
   h+=secRaw('i-cart','Ventas',vH);
 
-  let iH='<div class="res-line"><span class="rk">Material POP</span><span class="rv">'+(pop||'—')+'</span></div>';
-  iH+=(inventarioList.length?inventarioList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b>'+(p.categoria?' ['+escHtml(p.categoria)+']':'')+' · '+(p.cantidad||0)+' en estante</div>').join(''):'<div class="res-mini">Sin inventario registrado</div>');
-  h+=secRaw('i-box','Inventario',iH);
-
-  const icH = invCompList.length ? invCompList.map((p,i)=>{ const d=difInvComp(p); return '<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b> · inicial '+(p.cantidadInicial===''?'—':p.cantidadInicial)+' → final '+(p.cantidadFinal===''?'—':p.cantidadFinal)+(d===null?'':' ('+(d>0?'+':'')+d+')')+'</div>'; }).join('') : '<div class="res-mini">Sin inventario inicial/final registrado</div>';
-  h+=secRaw('i-refresh','Inventario Ini/Fin ('+invCompList.length+')',icH);
-
-  const tieneEx=(document.querySelector('input[name="tieneExhibicion"]:checked')||{}).value||'';
-  let exH='<div class="res-line"><span class="rk">¿Exhibición adicional?</span><span class="rv">'+(tieneEx||'—')+'</span></div>';
-  if(tieneEx==='Si'){
-    exH+='<div class="res-line"><span class="rk">Tipo</span><span class="rv">'+(escHtml(val('tipoExhibicion'))||'—')+'</span></div>';
-    exH+=(exhibicionList.length?exhibicionList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b>'+(p.categoria?' ['+escHtml(p.categoria)+']':'')+' · '+(p.cantidad||0)+' cara(s)</div>').join(''):'<div class="res-mini">Sin productos en la exhibición</div>');
-    exH+=ln('Foto',((fotoExhibicion||fotoExhibicionURL)?(fotoExhibicionURL?'<a href="'+fotoExhibicionURL+'" target="_blank">Ver foto</a>':'Tomada ✓'):'—'));
-  }
-  h+=secRaw('i-star','Exhibición adicional',exH);
-
-  const agH = agotadosList.length ? agotadosList.map((a,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(a.sku)||'—')+'</b> · '+(a.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin agotados registrados</div>';
-  h+=secRaw('i-xcircle','Agotados ('+agotadosList.length+')', agH);
-
-  const fcH = fechasList.length ? fechasList.map((f,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(f.sku)||'—')+'</b> · vence '+(f.vence||'—')+' · '+(f.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin productos por vencer</div>';
-  h+=secRaw('i-clock','Fechas cortas ('+fechasList.length+')', fcH);
-
-  let pedH = productosPedido.length ? productosPedido.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b> · '+p.cantidad+' × $'+fmt(p.precio)+' = <b>$'+fmt(p.subtotal)+'</b></div>').join('') : '<div class="res-mini">Sin productos en el pedido</div>';
-  pedH+='<div class="res-line" style="margin-top:8px"><span class="rk">Subtotal</span><span class="rv">$'+fmt(totalPed)+'</span></div>';
-  pedH+='<div class="res-line"><span class="rk">Descuento</span><span class="rv">$'+fmt(desc)+'</span></div>';
-  pedH+='<div class="res-line"><span class="rk">Total final</span><span class="rv">$'+fmt(Math.max(0,totalPed-desc))+'</span></div>';
-  if(promos.length) pedH+='<div class="res-mini">Promociones: '+escHtml(promos.join(', '))+'</div>';
-  h+=secRaw('i-package','Sugerido ('+productosPedido.length+' productos)', pedH);
+  const iH=inventarioList.length?inventarioList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b>'+(p.categoria?' ['+escHtml(p.categoria)+']':'')+' · '+(p.cantidad||0)+' en estante</div>').join(''):'<div class="res-mini">Sin inventario registrado</div>';
+  h+=secRaw('i-box','Inventario ('+inventarioList.length+')',iH);
 
   const muH = muestrasList.length ? muestrasList.map((m,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(m.nombre)||'—')+'</b>'+(m.categoria?' ['+escHtml(m.categoria)+']':'')+' · '+(m.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin muestras registradas</div>';
   h+=secRaw('i-image','Muestras ('+muestrasList.length+')', muH);
 
-  const mpH = materialPopList.length ? materialPopList.map((m,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(m.nombre)||'—')+'</b>'+(m.categoria?' ['+escHtml(m.categoria)+']':'')+' · '+(m.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin material POP registrado</div>';
-  h+=secRaw('i-upload','Material POP ('+materialPopList.length+')', mpH);
-
-  let chH = chequeoList.length ? chequeoList.map((c,i)=>{ const r=rangoChequeo(c); const tag=r?(r.ok?' ✓ dentro de rango':' ✗ fuera de rango'):''; const tp=c.tipoPrecio?' <span style="color:var(--navy);font-weight:600">['+escHtml(c.tipoPrecio)+']</span>':''; return '<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(c.sku)||'—')+'</b>'+tp+' · $'+fmt(c.precio||0)+tag+'</div>'; }).join('') : '<div class="res-mini">Sin chequeos propios</div>';
-  chH += chequeoCompList.length ? chequeoCompList.map((c,i)=>'<div class="res-mini">Competencia '+(i+1)+'. <b>'+(escHtml(c.producto)||'—')+'</b> · $'+fmt(c.valor||0)+' · '+escHtml(c.tipo||'Normal')+'</div>').join('') : '<div class="res-mini">Sin chequeos de competencia</div>';
-  h+=secRaw('i-alert','Chek de Precios', chH);
-
-  const nAntes=fotosAntes.map((v,i)=>v||fotosAntesURL[i]).filter(Boolean).length;
-  const nDespues=fotosDespues.map((v,i)=>v||fotosDespuesURL[i]).filter(Boolean).length;
-  const linksAntes=fotosAntes.map((v,i)=>fotosAntesURL[i]?'<a href="'+fotosAntesURL[i]+'" target="_blank">'+(i+1)+'</a>':(v?(i+1)+'✓':'')).filter(Boolean).join(' · ')||'—';
-  const linksDespues=fotosDespues.map((v,i)=>fotosDespuesURL[i]?'<a href="'+fotosDespuesURL[i]+'" target="_blank">'+(i+1)+'</a>':(v?(i+1)+'✓':'')).filter(Boolean).join(' · ')||'—';
-  h+=sec('i-camera','Fotos (estante)',[
-    ln('Antes ('+nAntes+'/3)', linksAntes),
-    ln('Después ('+nDespues+'/3)', linksDespues)
-  ]);
+  const prH = premiosList.length ? premiosList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.tipo)||'—')+'</b> · '+(p.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin premios entregados</div>';
+  h+=secRaw('i-star','Premios ('+premiosList.length+')', prH);
 
   h+='<div class="res-sec-h" style="margin-top:4px"><svg class="icon icon-sm"><use href="#i-list"/></svg>Estado de módulos</div>';
   h+=MODS.filter(m=>m.id!=='resumen').map(m=>'<div class="mod-state"><div class="ms-ic"><svg class="icon icon-sm"><use href="#'+m.icon+'"/></svg></div><div class="ms-name">'+m.label+'</div><span class="ms-tag '+(saved[m.id]?'ok':'no')+'">'+(saved[m.id]?'Guardado':'Pendiente')+'</span></div>').join('');
@@ -1747,11 +1713,9 @@ function validarModulo(id){
     if(v==='Si'){
       if(ventasList.length===0) e.push('Agrega al menos un producto vendido');
       ventasList.forEach((p,i)=>{ if(!p.sku) e.push('SKU vendido '+(i+1)); if(!p.cantidad||p.cantidad<1) e.push('Cantidad vendido '+(i+1)); });
-      const nk=parseFloat(val('kitsEntregados')), nr=parseFloat(val('recipientesEntregados'));
-      if(val('kitsEntregados')===''||isNaN(nk)||nk<0) e.push('Kits entregados (escribe 0 si no se entregó)');
-      if(val('recipientesEntregados')===''||isNaN(nr)||nr<0) e.push('Recipientes entregados (escribe 0 si no se entregó)');
     }
   }
+  if(id==='premios'){ premiosList.forEach((p,i)=>{ if(!p.tipo) e.push('Premio '+(i+1)+' (kit o recipiente)'); if(!p.cantidad||p.cantidad<1) e.push('Cantidad del premio '+(i+1)); }); }
   if(id==='inventarios'){ inventarioList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario '+(i+1)); }); }
   if(id==='invcomp'){ invCompList.forEach((p,i)=>{ if(!p.sku) e.push('Producto inv. ini/fin '+(i+1)); if(p.cantidadInicial===''||p.cantidadInicial==null) e.push('Cantidad inicial '+(i+1)); if(p.cantidadFinal===''||p.cantidadFinal==null) e.push('Cantidad final '+(i+1)); }); }
   if(id==='fotos'){
@@ -1792,8 +1756,9 @@ function recolectarGestion(){
     ventaRealizada: (document.querySelector('input[name="ventaRealizada"]:checked')||{}).value||'',
     ventaMotivoNo: val('ventaMotivoNo'),
     ventaProductos: ventasList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad,precio:p.precio,subtotal:p.subtotal})),
-    kitsEntregados: (document.querySelector('input[name="ventaRealizada"]:checked')||{}).value==='Si' ? val('kitsEntregados') : '',
-    recipientesEntregados: (document.querySelector('input[name="ventaRealizada"]:checked')||{}).value==='Si' ? val('recipientesEntregados') : '',
+    premiosEntregados: premiosList.map(p=>({id:p.id,tipo:p.tipo,cantidad:p.cantidad})),
+    kitsEntregados: premiosList.length ? totalPremios('Kit') : '',
+    recipientesEntregados: premiosList.length ? totalPremios('Recipiente') : '',
     materialPOP: pop,
     inventarioProductos: inventarioList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad})),
     inventarioComparativo: invCompList.map(p=>{ const d=difInvComp(p); return {id:p.id,categoria:p.categoria,sku:p.sku,cantidadInicial:p.cantidadInicial,cantidadFinal:p.cantidadFinal,diferencia:d===null?'':d}; }),
@@ -1850,7 +1815,7 @@ async function guardarModulo(id, finalizar){
       else { toast((MODS.find(m=>m.id===id)||{}).label+' guardado'); }
       if(data.erroresFoto&&data.erroresFoto.length) alert('Los datos se guardaron, pero alguna foto no se pudo subir. Vuelve a guardar este módulo para reintentar.\n\n'+data.erroresFoto.join('\n'));
       // Tras registrar el ingreso/inicio de gestión, se pasa directo al módulo de Ventas
-      if(id==='inicio' && !finalizar && modAvailable('ventas')) goTo('ventas'); else if(id==='inicio' && !finalizar) goTo('inventarios');
+      if(id==='inicio' && !finalizar) goTo('inventarios');
     } else { saved[id]=false; alert('Error: '+(data&&data.error?data.error:'desconocido')); }
   }catch(err){ saved[id]=false; ocultarLoading(); alert('Error de red: '+err.message); }
 }
@@ -1880,20 +1845,11 @@ function generarTextoGestion(){
   if(ventaR==='Si'){
     ventasList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _x'+(p.cantidad||0)+'_ → $'+fmt(p.subtotal||0)+'\n'; });
     t+='   Total venta: $'+fmt(totalVentaValor())+'\n';
-    t+='   🎁 Kits entregados: '+(val('kitsEntregados')||'0')+' · Recipientes: '+(val('recipientesEntregados')||'0')+'\n';
   }
-  t+='\n📦 *INVENTARIO*  (POP: '+(pop||'-')+')\n';
+  t+='\n📦 *INVENTARIO*\n';
   if(inventarioList.length) inventarioList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _'+(p.cantidad||0)+' und_\n'; }); else t+='   • -\n';
-  if(invCompList.length){ t+='\n🔄 *INVENTARIO INICIAL / FINAL*\n'; invCompList.forEach(p=>{ const d=difInvComp(p); t+='   • '+(p.sku||'-')+'  _'+(p.cantidadInicial===''?'-':p.cantidadInicial)+' → '+(p.cantidadFinal===''?'-':p.cantidadFinal)+(d===null?'':' ('+(d>0?'+':'')+d+')')+'_\n'; }); }
-  const tieneEx2=(document.querySelector('input[name="tieneExhibicion"]:checked')||{}).value||'';
-  if(tieneEx2==='Si'){ t+='\n🏆 *EXHIBICIÓN ADICIONAL* ('+(val('tipoExhibicion')||'-')+')\n'; exhibicionList.forEach(p=>{ t+='   • '+(p.sku||'-')+(p.categoria?' ['+p.categoria+']':'')+' _x'+(p.cantidad||0)+'_\n'; }); }
-  if(agotadosList.length){ t+='\n⚠️ *AGOTADOS*\n'; agotadosList.forEach(a=>{ t+='   • '+(a.sku||'-')+'  _x'+(a.cantidad||0)+'_\n'; }); }
-  if(fechasList.length){ t+='\n⏰ *FECHAS CORTAS*\n'; fechasList.forEach(f=>{ t+='   • '+(f.sku||'-')+'  _vence '+(f.vence||'-')+' · x'+(f.cantidad||0)+'_\n'; }); }
   if(muestrasList.length){ t+='\n🧪 *MUESTRAS*\n'; muestrasList.forEach(m=>{ t+='   • '+(m.nombre||'-')+(m.categoria?' ['+m.categoria+']':'')+'  _x'+(m.cantidad||0)+'_\n'; }); }
-  if(materialPopList.length){ t+='\n🗂️ *MATERIAL POP*\n'; materialPopList.forEach(m=>{ t+='   • '+(m.nombre||'-')+(m.categoria?' ['+m.categoria+']':'')+'  _x'+(m.cantidad||0)+'_\n'; }); }
-  if(chequeoList.length){ t+='\n🏷️ *CHEK DE PRECIOS*\n'; chequeoList.forEach(c=>{ const r=rangoChequeo(c); const tag=r?(r.ok?'✅ dentro de rango':'⚠️ fuera de rango'):''; t+='   • '+(c.sku||'-')+(c.tipoPrecio?' ('+c.tipoPrecio+')':'')+'  $'+fmt(c.precio||0)+(tag?' _('+tag+')_':'')+'\n'; }); }
-  if(chequeoCompList.length){ t+='\n🛍️ *CHEK COMPETENCIA*\n'; chequeoCompList.forEach(c=>{ t+='   • '+(c.producto||'-')+'  $'+fmt(c.valor||0)+'  _('+(c.tipo||'Normal')+')_\n'; }); }
-  if(productosPedido.length){ t+='\n🧮 *SUGERIDO*\n'; productosPedido.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _x'+p.cantidad+'_ → $'+fmt(p.subtotal)+'\n'; }); t+=linea+'\n💰 *TOTAL: $'+fmt(Math.max(0,totalPed-desc))+'*\n'; }
+  if(premiosList.length){ t+='\n🎁 *PREMIOS*\n'; premiosList.forEach(p=>{ t+='   • '+(p.tipo||'-')+'  _x'+(p.cantidad||0)+'_\n'; }); }
   if(val('proximaVisita')) t+='\n📅 Próxima visita: '+val('proximaVisita')+'\n';
   if(val('observacionesGenerales')) t+='📝 '+val('observacionesGenerales')+'\n';
   t+='\n_Enviado desde Captura PQP_';
