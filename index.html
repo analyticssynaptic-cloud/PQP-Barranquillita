@@ -170,7 +170,7 @@
   /* PÉTALOS: solo icono, sin fondo */
   .petal{position:absolute;left:0;bottom:0;width:50px;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;transform:translate(-50%,0) scale(.3);opacity:0;pointer-events:none;transition:transform .36s cubic-bezier(.34,1.56,.64,1),opacity .25s}
   .flower.open .petal{transform:translate(calc(-50% + var(--x)),var(--y)) scale(1);opacity:1;pointer-events:auto}
-  .flower.open .petal:nth-child(1){transition-delay:.02s}.flower.open .petal:nth-child(2){transition-delay:.04s}.flower.open .petal:nth-child(3){transition-delay:.06s}.flower.open .petal:nth-child(4){transition-delay:.08s}.flower.open .petal:nth-child(5){transition-delay:.10s}.flower.open .petal:nth-child(6){transition-delay:.12s}.flower.open .petal:nth-child(7){transition-delay:.14s}.flower.open .petal:nth-child(8){transition-delay:.16s}.flower.open .petal:nth-child(9){transition-delay:.18s}.flower.open .petal:nth-child(10){transition-delay:.20s}.flower.open .petal:nth-child(11){transition-delay:.22s}.flower.open .petal:nth-child(12){transition-delay:.24s}
+  .flower.open .petal:nth-child(1){transition-delay:.02s}.flower.open .petal:nth-child(2){transition-delay:.04s}.flower.open .petal:nth-child(3){transition-delay:.06s}.flower.open .petal:nth-child(4){transition-delay:.08s}.flower.open .petal:nth-child(5){transition-delay:.10s}.flower.open .petal:nth-child(6){transition-delay:.12s}.flower.open .petal:nth-child(7){transition-delay:.14s}.flower.open .petal:nth-child(8){transition-delay:.16s}.flower.open .petal:nth-child(9){transition-delay:.18s}.flower.open .petal:nth-child(10){transition-delay:.20s}.flower.open .petal:nth-child(11){transition-delay:.22s}.flower.open .petal:nth-child(12){transition-delay:.24s}.flower.open .petal:nth-child(13){transition-delay:.26s}
   .petal-ic{color:#fff;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));transition:all .15s ease}
   .petal-ic svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .petal:hover .petal-ic{transform:translateY(-3px);color:#d4d6da}
@@ -613,6 +613,21 @@
     </div>
   </section>
 
+  <!-- INVENTARIO INICIAL VS FINAL -->
+  <section class="mod" data-mod="invcomp">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-refresh"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Inventario Inicial vs Final</div><div class="card-sub">Stock al llegar y al salir del punto</div></div>
+        <span class="saved-badge" id="badge-invcomp"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div id="listaInvComp"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarInvComp()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar producto</button>
+      <button type="button" class="btn btn-outline btn-block" style="margin-top:9px" onclick="traerInvComp()"><svg class="icon icon-sm"><use href="#i-copy"/></svg>Traer productos del módulo Inventarios</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('invcomp')"><svg class="icon"><use href="#i-save"/></svg>Guardar Inventario Ini/Fin</button></div>
+    </div>
+  </section>
+
   <!-- CHEQUEO DE PRECIOS -->
   <section class="mod" data-mod="chequeo">
     <div class="card">
@@ -695,6 +710,8 @@
   <button class="petal" data-mod="chequeo"      style="--x:30px;--y:-87px"><span class="petal-ic"><svg><use href="#i-alert"/></svg></span><span class="petal-lbl">Chek Precio</span></button>
   <button class="petal" data-mod="pedido"       style="--x:90px;--y:-80px"><span class="petal-ic"><svg><use href="#i-package"/></svg></span><span class="petal-lbl">Sugerido</span></button>
   <button class="petal" data-mod="resumen"      style="--x:150px;--y:-66px"><span class="petal-ic"><svg><use href="#i-list"/></svg></span><span class="petal-lbl">Resumen</span></button>
+  <!-- Fila superior: Inventario Inicial vs Final -->
+  <button class="petal" data-mod="invcomp"      style="--x:0px;--y:-280px"><span class="petal-ic"><svg><use href="#i-refresh"/></svg></span><span class="petal-lbl">Inv. Ini/Fin</span></button>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -796,12 +813,13 @@ const MODS = [
   {id:'muestras',     icon:'i-image',   label:'Entrega muestras'},
   {id:'materialpop',  icon:'i-upload',  label:'Material POP'},
   {id:'chequeo',      icon:'i-alert',   label:'Chek Precios'},
+  {id:'invcomp',      icon:'i-refresh', label:'Inv. Inicial/Final'},
   {id:'pedido',       icon:'i-package', label:'Sugerido'},
   {id:'resumen',      icon:'i-list',    label:'Resumen'}
 ];
 
 let parametrizacion = { ciudadesPDV:{}, skus:[], muestras:[], materialPOPCat:[] };
-let muestrasList = [], materialPopList = [], chequeoList = [], chequeoCompList = [];
+let muestrasList = [], materialPopList = [], chequeoList = [], chequeoCompList = [], invCompList = [];
 let modoManual = false;
 let registroId = '';
 let saved = {};
@@ -1047,8 +1065,8 @@ function aplicarGestionRemota(registroIdRecuperado, g){
   else { aplicarPendCiudadPDV(); }
   const darId=list=>(list||[]).map(it=>Object.assign({id:uid('r')},it));
   productosPedido=darId(g.pedidoProductos); agotadosList=darId(g.agotados); fechasList=darId(g.fechasCortas); ventasList=darId(g.ventaProductos); inventarioList=darId(g.inventarioProductos); exhibicionList=darId(g.exhibicionAdicionalProductos);
-  muestrasList=darId(g.muestrasProductos); materialPopList=darId(g.materialPOPEntregado); chequeoList=darId(g.chequeoPrecios); chequeoCompList=darId(g.chequeoCompetencia);
-  renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
+  muestrasList=darId(g.muestrasProductos); materialPopList=darId(g.materialPOPEntregado); chequeoList=darId(g.chequeoPrecios); chequeoCompList=darId(g.chequeoCompetencia); invCompList=darId(g.inventarioComparativo);
+  renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
   fotoPerfil=''; fotoPerfilURL=g.fotoPerfilURL||'';
   if(fotoPerfilURL){ const box=document.getElementById('fotoIngresoBox'); if(box){ box.classList.add('has'); document.getElementById('fiTitle').textContent='Selfie lista ✓'; document.getElementById('fiSub').textContent='Toca para volver a tomar'; } }
   fotoExhibicionURL=g.fotoExhibicionURL||'';
@@ -1145,7 +1163,7 @@ function persistir(){
   try{
     const campos=recolectarGestion(); campos.fotoPerfil=''; campos.fotoExhibicion='';
     ['fotoAntes','fotoAntes2','fotoAntes3','fotoDespues','fotoDespues2','fotoDespues3'].forEach(k=>campos[k]='');
-    const data={ loggedIn:true, guardadoEn:Date.now(), registroId, saved, current, ubicacion, fotosAntesURL, fotosDespuesURL, fotoExhibicionURL, campos, listas:{ productosPedido, agotadosList, fechasList, ventasList, inventarioList, exhibicionList, muestrasList, materialPopList, chequeoList, chequeoCompList } };
+    const data={ loggedIn:true, guardadoEn:Date.now(), registroId, saved, current, ubicacion, fotosAntesURL, fotosDespuesURL, fotoExhibicionURL, campos, listas:{ productosPedido, agotadosList, fechasList, ventasList, inventarioList, exhibicionList, muestrasList, materialPopList, chequeoList, chequeoCompList, invCompList } };
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   }catch(e){}
 }
@@ -1183,7 +1201,7 @@ function restaurarSesion(){
   // Listas
   const L=d.listas||{};
   productosPedido=L.productosPedido||[]; agotadosList=L.agotadosList||[]; fechasList=L.fechasList||[]; ventasList=L.ventasList||[]; inventarioList=L.inventarioList||[]; exhibicionList=L.exhibicionList||[];
-  muestrasList=L.muestrasList||[]; materialPopList=L.materialPopList||[]; chequeoList=L.chequeoList||[]; chequeoCompList=L.chequeoCompList||[];
+  muestrasList=L.muestrasList||[]; materialPopList=L.materialPopList||[]; chequeoList=L.chequeoList||[]; chequeoCompList=L.chequeoCompList||[]; invCompList=L.invCompList||[];
   renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
   // Ubicación
   ubicacion = d.ubicacion||{lat:null,lng:null,acc:null};
@@ -1265,7 +1283,7 @@ function getPDV(){ return modoManual?document.getElementById('pdvTexto').value.t
 function onVentaChange(){ const v=(document.querySelector('input[name="ventaRealizada"]:checked')||{}).value; document.getElementById('ventaNo').style.display=v==='No'?'block':'none'; document.getElementById('ventaSi').style.display=v==='Si'?'block':'none'; if(v==='Si'&&ventasList.length===0&&!restaurando) agregarVenta(); }
 
 // ===== LISTAS (pedido / agotados / fechas) =====
-function findItem(id){ return productosPedido.find(x=>x.id===id) || agotadosList.find(x=>x.id===id) || fechasList.find(x=>x.id===id) || ventasList.find(x=>x.id===id) || inventarioList.find(x=>x.id===id) || exhibicionList.find(x=>x.id===id) || muestrasList.find(x=>x.id===id) || materialPopList.find(x=>x.id===id) || chequeoList.find(x=>x.id===id) || chequeoCompList.find(x=>x.id===id); }
+function findItem(id){ return productosPedido.find(x=>x.id===id) || agotadosList.find(x=>x.id===id) || fechasList.find(x=>x.id===id) || ventasList.find(x=>x.id===id) || inventarioList.find(x=>x.id===id) || exhibicionList.find(x=>x.id===id) || muestrasList.find(x=>x.id===id) || materialPopList.find(x=>x.id===id) || chequeoList.find(x=>x.id===id) || chequeoCompList.find(x=>x.id===id) || invCompList.find(x=>x.id===id); }
 
 // Ventas (categoría + SKU + cantidad + precio/subtotal, para el total de venta y la regla de Evacuador)
 function agregarVenta(){ ventasList.push({id:uid('v'),categoria:'',sku:'',cantidad:1,precio:0,subtotal:0}); renderVentas(); calcularTotalVenta(); }
@@ -1314,6 +1332,42 @@ function alertaStock(cant){
   if(c<=3) return '<div class="res-mini" style="color:var(--error);font-weight:600">🔴 Próximo a agotarse: quedan '+c+' und</div>';
   if(c<=8) return '<div class="res-mini" style="color:var(--warn);font-weight:600">🟡 Inventario bajo: quedan '+c+' und, vigila reposición</div>';
   return '';
+}
+// Inventario inicial vs final (categoría + SKU + cantidad al llegar + cantidad al salir)
+function agregarInvComp(){ invCompList.push({id:uid('ic'),categoria:'',sku:'',cantidadInicial:'',cantidadFinal:''}); renderInvComp(); }
+function eliminarInvComp(id){ invCompList=invCompList.filter(x=>x.id!==id); renderInvComp(); }
+function traerInvComp(){
+  let n=0;
+  inventarioList.forEach(p=>{ if(p.sku && !invCompList.some(x=>x.sku===p.sku)){ invCompList.push({id:uid('ic'),categoria:p.categoria,sku:p.sku,cantidadInicial:p.cantidad,cantidadFinal:''}); n++; } });
+  renderInvComp(); toast(n?(n+' producto(s) traídos de Inventarios'):'No hay productos nuevos en Inventarios', !n);
+}
+function difInvComp(p){
+  if(p.cantidadInicial===''||p.cantidadFinal===''||p.cantidadInicial==null||p.cantidadFinal==null) return null;
+  return (parseFloat(p.cantidadFinal)||0)-(parseFloat(p.cantidadInicial)||0);
+}
+function htmlDifInvComp(p){
+  const d=difInvComp(p); if(d===null) return '';
+  const ini=parseFloat(p.cantidadInicial)||0;
+  const col=d<0?'var(--error)':(d>0?'var(--success)':'var(--ink-soft)');
+  const txt=d<0?('Salieron '+Math.abs(d)+' und (vendido / consumido)'):(d>0?('Aumentó '+d+' und (reposición)'):'Sin cambios');
+  return '<div class="res-mini" style="color:'+col+';font-weight:600">Diferencia: '+(d>0?'+':'')+d+' · '+txt+(ini>0&&d<0?' · '+Math.round(Math.abs(d)/ini*100)+'% del inicial':'')+'</div>';
+}
+function setCantInvComp(id,campo,v){
+  const p=invCompList.find(x=>x.id===id); if(!p) return;
+  p[campo]= v===''?'':Math.max(0,parseFloat(v)||0);
+  const el=document.getElementById('invCompDif-'+id); if(el) el.innerHTML=htmlDifInvComp(p);
+}
+function renderInvComp(){
+  const cont=document.getElementById('listaInvComp'); if(!cont) return; cont.innerHTML='';
+  if(invCompList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega los productos o trae los del módulo Inventarios.</div>'; return; }
+  invCompList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-refresh"/></svg>Producto ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarInvComp('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoSkuCascada(p)}
+    <div class="field-row" style="margin-bottom:6px">
+      <div class="field" style="margin-bottom:0"><label class="label label-req">Inicial (al llegar)</label><input type="number" class="input" min="0" inputmode="numeric" value="${p.cantidadInicial}" oninput="setCantInvComp('${p.id}','cantidadInicial',this.value)"></div>
+      <div class="field" style="margin-bottom:0"><label class="label label-req">Final (al salir)</label><input type="number" class="input" min="0" inputmode="numeric" value="${p.cantidadFinal}" oninput="setCantInvComp('${p.id}','cantidadFinal',this.value)"></div>
+    </div>
+    <div id="invCompDif-${p.id}">${htmlDifInvComp(p)}</div>`; cont.appendChild(d); });
 }
 function setCantidadInv(id,v){ setFld(id,'cantidad',v); const p=findItem(id); const el=document.getElementById('invAlerta-'+id); if(el) el.innerHTML = p?alertaStock(p.cantidad):''; }
 
@@ -1398,7 +1452,7 @@ function setCategoriaItem(id, valor){
   if('precio' in p){ p.precio=0; p.subtotal=0; calcularTotalPedido(); subDOM('listaPedido',productosPedido,p); }
 }
 // Re-render de las listas para refrescar opciones cuando llegan los SKU de la API
-function poblarSkus(){ renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalVenta(); }
+function poblarSkus(){ renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalVenta(); }
 
 // ===== CASCADA GENÉRICA (Muestras / Material POP: catálogo nombre+categoría) =====
 function campoCascadaCatalogo(p, catalogo){
@@ -1624,6 +1678,9 @@ function renderResumen(){
   iH+=(inventarioList.length?inventarioList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b>'+(p.categoria?' ['+escHtml(p.categoria)+']':'')+' · '+(p.cantidad||0)+' en estante</div>').join(''):'<div class="res-mini">Sin inventario registrado</div>');
   h+=secRaw('i-box','Inventario',iH);
 
+  const icH = invCompList.length ? invCompList.map((p,i)=>{ const d=difInvComp(p); return '<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b> · inicial '+(p.cantidadInicial===''?'—':p.cantidadInicial)+' → final '+(p.cantidadFinal===''?'—':p.cantidadFinal)+(d===null?'':' ('+(d>0?'+':'')+d+')')+'</div>'; }).join('') : '<div class="res-mini">Sin inventario inicial/final registrado</div>';
+  h+=secRaw('i-refresh','Inventario Ini/Fin ('+invCompList.length+')',icH);
+
   const tieneEx=(document.querySelector('input[name="tieneExhibicion"]:checked')||{}).value||'';
   let exH='<div class="res-line"><span class="rk">¿Exhibición adicional?</span><span class="rv">'+(tieneEx||'—')+'</span></div>';
   if(tieneEx==='Si'){
@@ -1696,6 +1753,7 @@ function validarModulo(id){
     }
   }
   if(id==='inventarios'){ inventarioList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario '+(i+1)); }); }
+  if(id==='invcomp'){ invCompList.forEach((p,i)=>{ if(!p.sku) e.push('Producto inv. ini/fin '+(i+1)); if(p.cantidadInicial===''||p.cantidadInicial==null) e.push('Cantidad inicial '+(i+1)); if(p.cantidadFinal===''||p.cantidadFinal==null) e.push('Cantidad final '+(i+1)); }); }
   if(id==='fotos'){
     const nA=fotosAntes.map((v,i)=>v||fotosAntesURL[i]).filter(Boolean).length;
     const nD=fotosDespues.map((v,i)=>v||fotosDespuesURL[i]).filter(Boolean).length;
@@ -1738,6 +1796,7 @@ function recolectarGestion(){
     recipientesEntregados: (document.querySelector('input[name="ventaRealizada"]:checked')||{}).value==='Si' ? val('recipientesEntregados') : '',
     materialPOP: pop,
     inventarioProductos: inventarioList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad})),
+    inventarioComparativo: invCompList.map(p=>{ const d=difInvComp(p); return {id:p.id,categoria:p.categoria,sku:p.sku,cantidadInicial:p.cantidadInicial,cantidadFinal:p.cantidadFinal,diferencia:d===null?'':d}; }),
     fotoAntes: fotosAntes[0]||'', fotoAntes2: fotosAntes[1]||'', fotoAntes3: fotosAntes[2]||'',
     fotoDespues: fotosDespues[0]||'', fotoDespues2: fotosDespues[1]||'', fotoDespues3: fotosDespues[2]||'',
     fotoAntesURL: fotosAntesURL[0]||'', fotoAntes2URL: fotosAntesURL[1]||'', fotoAntes3URL: fotosAntesURL[2]||'',
@@ -1825,6 +1884,7 @@ function generarTextoGestion(){
   }
   t+='\n📦 *INVENTARIO*  (POP: '+(pop||'-')+')\n';
   if(inventarioList.length) inventarioList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _'+(p.cantidad||0)+' und_\n'; }); else t+='   • -\n';
+  if(invCompList.length){ t+='\n🔄 *INVENTARIO INICIAL / FINAL*\n'; invCompList.forEach(p=>{ const d=difInvComp(p); t+='   • '+(p.sku||'-')+'  _'+(p.cantidadInicial===''?'-':p.cantidadInicial)+' → '+(p.cantidadFinal===''?'-':p.cantidadFinal)+(d===null?'':' ('+(d>0?'+':'')+d+')')+'_\n'; }); }
   const tieneEx2=(document.querySelector('input[name="tieneExhibicion"]:checked')||{}).value||'';
   if(tieneEx2==='Si'){ t+='\n🏆 *EXHIBICIÓN ADICIONAL* ('+(val('tipoExhibicion')||'-')+')\n'; exhibicionList.forEach(p=>{ t+='   • '+(p.sku||'-')+(p.categoria?' ['+p.categoria+']':'')+' _x'+(p.cantidad||0)+'_\n'; }); }
   if(agotadosList.length){ t+='\n⚠️ *AGOTADOS*\n'; agotadosList.forEach(a=>{ t+='   • '+(a.sku||'-')+'  _x'+(a.cantidad||0)+'_\n'; }); }
