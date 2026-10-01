@@ -477,6 +477,21 @@
     </div>
   </section>
 
+  <!-- INVENTARIO FINAL -->
+  <section class="mod" data-mod="invfinal">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-box"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Inventario Final</div><div class="card-sub">Productos en estante al salir</div></div>
+        <span class="saved-badge" id="badge-invfinal"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div id="listaInvFinal"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarInvFinal()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar producto</button>
+      <button type="button" class="btn btn-outline btn-block" style="margin-top:9px" onclick="traerInvFinal()"><svg class="icon icon-sm"><use href="#i-copy"/></svg>Traer productos del Inventario Inicial</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('invfinal')"><svg class="icon"><use href="#i-save"/></svg>Guardar Inventario Final</button></div>
+    </div>
+  </section>
+
   <!-- PREMIOS -->
   <section class="mod" data-mod="premios">
     <div class="card">
@@ -497,12 +512,12 @@
     <div class="card">
       <div class="card-head">
         <div class="card-chip"><svg class="icon icon-lg"><use href="#i-box"/></svg></div>
-        <div class="card-head-text"><div class="card-title">Inventarios</div><div class="card-sub">Productos en estante</div></div>
+        <div class="card-head-text"><div class="card-title">Inventario Inicial</div><div class="card-sub">Productos en estante al llegar</div></div>
         <span class="saved-badge" id="badge-inventarios"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
       </div>
       <div id="listaInventario"></div>
       <button type="button" class="btn btn-soft btn-block" onclick="agregarInv()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar producto</button>
-      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('inventarios')"><svg class="icon"><use href="#i-save"/></svg>Guardar Inventarios</button></div>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('inventarios')"><svg class="icon"><use href="#i-save"/></svg>Guardar Inventario Inicial</button></div>
     </div>
   </section>
 
@@ -704,12 +719,13 @@
 <!-- FLOWER -->
 <div class="flower-bd" id="flowerBd" onclick="closeFlower()"></div>
 <div class="flower" id="flower">
-  <button class="petal" data-mod="inicio"      style="--x:-150px;--y:-120px"><span class="petal-ic"><svg><use href="#i-pin"/></svg></span><span class="petal-lbl">Ingreso</span></button>
-  <button class="petal" data-mod="inventarios" style="--x:-90px;--y:-163px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inventario</span></button>
-  <button class="petal" data-mod="ventas"      style="--x:-30px;--y:-185px"><span class="petal-ic"><svg><use href="#i-cart"/></svg></span><span class="petal-lbl">Ventas</span></button>
-  <button class="petal" data-mod="muestras"    style="--x:30px;--y:-185px"><span class="petal-ic"><svg><use href="#i-image"/></svg></span><span class="petal-lbl">Muestras</span></button>
-  <button class="petal" data-mod="premios"     style="--x:90px;--y:-163px"><span class="petal-ic"><svg><use href="#i-star"/></svg></span><span class="petal-lbl">Premios</span></button>
-  <button class="petal" data-mod="resumen"     style="--x:150px;--y:-120px"><span class="petal-ic"><svg><use href="#i-list"/></svg></span><span class="petal-lbl">Resumen</span></button>
+  <button class="petal" data-mod="inicio" style="--x:-150px;--y:-90px"><span class="petal-ic"><svg><use href="#i-pin"/></svg></span><span class="petal-lbl">Ingreso</span></button>
+  <button class="petal" data-mod="inventarios" style="--x:-100px;--y:-140px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inv. Inicial</span></button>
+  <button class="petal" data-mod="ventas" style="--x:-50px;--y:-175px"><span class="petal-ic"><svg><use href="#i-cart"/></svg></span><span class="petal-lbl">Ventas</span></button>
+  <button class="petal" data-mod="muestras" style="--x:0px;--y:-190px"><span class="petal-ic"><svg><use href="#i-image"/></svg></span><span class="petal-lbl">Muestras</span></button>
+  <button class="petal" data-mod="premios" style="--x:50px;--y:-175px"><span class="petal-ic"><svg><use href="#i-star"/></svg></span><span class="petal-lbl">Premios</span></button>
+  <button class="petal" data-mod="invfinal" style="--x:100px;--y:-140px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inv. Final</span></button>
+  <button class="petal" data-mod="resumen" style="--x:150px;--y:-90px"><span class="petal-ic"><svg><use href="#i-list"/></svg></span><span class="petal-lbl">Resumen</span></button>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -799,18 +815,19 @@ const KIT_CONTENIDO = 'Detergente polvo 125 g + Detergente líquido 110 g + Suav
 const VENTAS_SOLO_SABADO = false;
 function diaClave(ms){ const d=new Date(ms||Date.now()); return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2); }
 
-// Orden = ruta de la visita: ingreso, inventarios, ventas, muestras, premios, resumen
+// Orden = ruta de la visita: ingreso, inventario inicial, ventas, muestras, premios, inventario final, resumen
 const MODS = [
   {id:'inicio',       icon:'i-pin',     label:'Ingreso'},
-  {id:'inventarios',  icon:'i-box',     label:'Inventarios'},
+  {id:'inventarios',  icon:'i-box',     label:'Inventario Inicial'},
   {id:'ventas',       icon:'i-cart',    label:'Ventas'},
   {id:'muestras',     icon:'i-image',   label:'Entrega muestras'},
   {id:'premios',      icon:'i-star',    label:'Premios'},
+  {id:'invfinal',     icon:'i-box',     label:'Inventario Final'},
   {id:'resumen',      icon:'i-list',    label:'Resumen'}
 ];
 
 let parametrizacion = { ciudadesPDV:{}, skus:[], muestras:[], materialPOPCat:[] };
-let muestrasList = [], materialPopList = [], chequeoList = [], chequeoCompList = [], invCompList = [], premiosList = [];
+let muestrasList = [], materialPopList = [], chequeoList = [], chequeoCompList = [], invCompList = [], premiosList = [], invFinalList = [];
 let modoManual = false;
 let registroId = '';
 let saved = {};
@@ -1056,8 +1073,8 @@ function aplicarGestionRemota(registroIdRecuperado, g){
   else { aplicarPendCiudadPDV(); }
   const darId=list=>(list||[]).map(it=>Object.assign({id:uid('r')},it));
   productosPedido=darId(g.pedidoProductos); agotadosList=darId(g.agotados); fechasList=darId(g.fechasCortas); ventasList=darId(g.ventaProductos); inventarioList=darId(g.inventarioProductos); exhibicionList=darId(g.exhibicionAdicionalProductos);
-  muestrasList=darId(g.muestrasProductos); materialPopList=darId(g.materialPOPEntregado); chequeoList=darId(g.chequeoPrecios); chequeoCompList=darId(g.chequeoCompetencia); invCompList=darId(g.inventarioComparativo); premiosList=darId(g.premiosEntregados);
-  renderPremios(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
+  muestrasList=darId(g.muestrasProductos); materialPopList=darId(g.materialPOPEntregado); chequeoList=darId(g.chequeoPrecios); chequeoCompList=darId(g.chequeoCompetencia); invCompList=darId(g.inventarioComparativo); premiosList=darId(g.premiosEntregados); invFinalList=darId(g.inventarioFinal);
+  renderInvFinal(); renderPremios(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
   fotoPerfil=''; fotoPerfilURL=g.fotoPerfilURL||'';
   if(fotoPerfilURL){ const box=document.getElementById('fotoIngresoBox'); if(box){ box.classList.add('has'); document.getElementById('fiTitle').textContent='Selfie lista ✓'; document.getElementById('fiSub').textContent='Toca para volver a tomar'; } }
   fotoExhibicionURL=g.fotoExhibicionURL||'';
@@ -1154,7 +1171,7 @@ function persistir(){
   try{
     const campos=recolectarGestion(); campos.fotoPerfil=''; campos.fotoExhibicion='';
     ['fotoAntes','fotoAntes2','fotoAntes3','fotoDespues','fotoDespues2','fotoDespues3'].forEach(k=>campos[k]='');
-    const data={ loggedIn:true, guardadoEn:Date.now(), registroId, saved, current, ubicacion, fotosAntesURL, fotosDespuesURL, fotoExhibicionURL, campos, listas:{ productosPedido, agotadosList, fechasList, ventasList, inventarioList, exhibicionList, muestrasList, materialPopList, chequeoList, chequeoCompList, invCompList, premiosList } };
+    const data={ loggedIn:true, guardadoEn:Date.now(), registroId, saved, current, ubicacion, fotosAntesURL, fotosDespuesURL, fotoExhibicionURL, campos, listas:{ productosPedido, agotadosList, fechasList, ventasList, inventarioList, exhibicionList, muestrasList, materialPopList, chequeoList, chequeoCompList, invCompList, premiosList, invFinalList } };
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   }catch(e){}
 }
@@ -1192,7 +1209,7 @@ function restaurarSesion(){
   // Listas
   const L=d.listas||{};
   productosPedido=L.productosPedido||[]; agotadosList=L.agotadosList||[]; fechasList=L.fechasList||[]; ventasList=L.ventasList||[]; inventarioList=L.inventarioList||[]; exhibicionList=L.exhibicionList||[];
-  muestrasList=L.muestrasList||[]; materialPopList=L.materialPopList||[]; chequeoList=L.chequeoList||[]; chequeoCompList=L.chequeoCompList||[]; invCompList=L.invCompList||[]; premiosList=L.premiosList||[];
+  muestrasList=L.muestrasList||[]; materialPopList=L.materialPopList||[]; chequeoList=L.chequeoList||[]; chequeoCompList=L.chequeoCompList||[]; invCompList=L.invCompList||[]; premiosList=L.premiosList||[]; invFinalList=L.invFinalList||[];
   renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
   // Ubicación
   ubicacion = d.ubicacion||{lat:null,lng:null,acc:null};
@@ -1274,7 +1291,7 @@ function getPDV(){ return modoManual?document.getElementById('pdvTexto').value.t
 function onVentaChange(){ const v=(document.querySelector('input[name="ventaRealizada"]:checked')||{}).value; document.getElementById('ventaNo').style.display=v==='No'?'block':'none'; document.getElementById('ventaSi').style.display=v==='Si'?'block':'none'; if(v==='Si'&&ventasList.length===0&&!restaurando) agregarVenta(); }
 
 // ===== LISTAS (pedido / agotados / fechas) =====
-function findItem(id){ return productosPedido.find(x=>x.id===id) || agotadosList.find(x=>x.id===id) || fechasList.find(x=>x.id===id) || ventasList.find(x=>x.id===id) || inventarioList.find(x=>x.id===id) || exhibicionList.find(x=>x.id===id) || muestrasList.find(x=>x.id===id) || materialPopList.find(x=>x.id===id) || chequeoList.find(x=>x.id===id) || chequeoCompList.find(x=>x.id===id) || invCompList.find(x=>x.id===id) || premiosList.find(x=>x.id===id); }
+function findItem(id){ return productosPedido.find(x=>x.id===id) || agotadosList.find(x=>x.id===id) || fechasList.find(x=>x.id===id) || ventasList.find(x=>x.id===id) || inventarioList.find(x=>x.id===id) || exhibicionList.find(x=>x.id===id) || muestrasList.find(x=>x.id===id) || materialPopList.find(x=>x.id===id) || chequeoList.find(x=>x.id===id) || chequeoCompList.find(x=>x.id===id) || invCompList.find(x=>x.id===id) || premiosList.find(x=>x.id===id) || invFinalList.find(x=>x.id===id); }
 
 // Ventas (categoría + SKU + cantidad + precio/subtotal, para el total de venta y la regla de Evacuador)
 function agregarVenta(){ ventasList.push({id:uid('v'),categoria:'',sku:'',cantidad:1,precio:0,subtotal:0}); renderVentas(); calcularTotalVenta(); }
@@ -1323,6 +1340,31 @@ function alertaStock(cant){
   if(c<=3) return '<div class="res-mini" style="color:var(--error);font-weight:600">🔴 Próximo a agotarse: quedan '+c+' und</div>';
   if(c<=8) return '<div class="res-mini" style="color:var(--warn);font-weight:600">🟡 Inventario bajo: quedan '+c+' und, vigila reposición</div>';
   return '';
+}
+// Inventario final (categoría + SKU + cantidad en estante al salir)
+function agregarInvFinal(){ invFinalList.push({id:uid('nf'),categoria:'',sku:'',cantidad:0}); renderInvFinal(); }
+function eliminarInvFinal(id){ invFinalList=invFinalList.filter(x=>x.id!==id); renderInvFinal(); }
+function traerInvFinal(){
+  let n=0;
+  inventarioList.forEach(p=>{ if(p.sku && !invFinalList.some(x=>x.sku===p.sku)){ invFinalList.push({id:uid('nf'),categoria:p.categoria,sku:p.sku,cantidad:0}); n++; } });
+  renderInvFinal(); toast(n?(n+' producto(s) traídos del inventario inicial'):'No hay productos nuevos en el inventario inicial', !n);
+}
+function inicialDe(sku){ const q=inventarioList.find(x=>x.sku===sku); return q?q.cantidad:null; }
+function htmlDifFinal(p){
+  const ini=inicialDe(p.sku); if(ini===null||!p.sku) return '';
+  const d=(parseFloat(p.cantidad)||0)-(parseFloat(ini)||0);
+  const col=d<0?'var(--error)':(d>0?'var(--success)':'var(--ink-soft)');
+  return '<div class="res-mini" style="color:'+col+';font-weight:600">Inicial: '+ini+' · Final: '+(parseFloat(p.cantidad)||0)+' · Diferencia: '+(d>0?'+':'')+d+'</div>';
+}
+function setCantidadInvFinal(id,v){ setFld(id,'cantidad',v); const p=invFinalList.find(x=>x.id===id); const el=document.getElementById('invFinalDif-'+id); if(el&&p) el.innerHTML=htmlDifFinal(p); }
+function renderInvFinal(){
+  const cont=document.getElementById('listaInvFinal'); if(!cont) return; cont.innerHTML='';
+  if(invFinalList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega los productos en estante al salir o trae los del inventario inicial.</div>'; return; }
+  invFinalList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-box"/></svg>Producto ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarInvFinal('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    ${campoSkuCascada(p)}
+    <div class="field" style="margin-bottom:6px"><label class="label label-req">Cantidad final en estante</label><input type="number" class="input" min="0" inputmode="numeric" value="${p.cantidad}" oninput="setCantidadInvFinal('${p.id}',this.value)"></div>
+    <div id="invFinalDif-${p.id}">${htmlDifFinal(p)}</div>`; cont.appendChild(d); });
 }
 // Premios: Kit o Recipiente + cantidad entregada
 function agregarPremio(){ premiosList.push({id:uid('pr'),tipo:'',cantidad:1}); renderPremios(); }
@@ -1459,7 +1501,7 @@ function setCategoriaItem(id, valor){
   if('precio' in p){ p.precio=0; p.subtotal=0; calcularTotalPedido(); subDOM('listaPedido',productosPedido,p); }
 }
 // Re-render de las listas para refrescar opciones cuando llegan los SKU de la API
-function poblarSkus(){ renderPremios(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalVenta(); }
+function poblarSkus(){ renderInvFinal(); renderPremios(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalVenta(); }
 
 // ===== CASCADA GENÉRICA (Muestras / Material POP: catálogo nombre+categoría) =====
 function campoCascadaCatalogo(p, catalogo){
@@ -1680,7 +1722,10 @@ function renderResumen(){
   h+=secRaw('i-cart','Ventas',vH);
 
   const iH=inventarioList.length?inventarioList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b>'+(p.categoria?' ['+escHtml(p.categoria)+']':'')+' · '+(p.cantidad||0)+' en estante</div>').join(''):'<div class="res-mini">Sin inventario registrado</div>';
-  h+=secRaw('i-box','Inventario ('+inventarioList.length+')',iH);
+  h+=secRaw('i-box','Inventario inicial ('+inventarioList.length+')',iH);
+
+  const ifH=invFinalList.length?invFinalList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.sku)||'—')+'</b>'+(p.categoria?' ['+escHtml(p.categoria)+']':'')+' · '+(p.cantidad||0)+' en estante</div>').join(''):'<div class="res-mini">Sin inventario final registrado</div>';
+  h+=secRaw('i-box','Inventario final ('+invFinalList.length+')',ifH);
 
   const muH = muestrasList.length ? muestrasList.map((m,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(m.nombre)||'—')+'</b>'+(m.categoria?' ['+escHtml(m.categoria)+']':'')+' · '+(m.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin muestras registradas</div>';
   h+=secRaw('i-image','Muestras ('+muestrasList.length+')', muH);
@@ -1715,6 +1760,7 @@ function validarModulo(id){
       ventasList.forEach((p,i)=>{ if(!p.sku) e.push('SKU vendido '+(i+1)); if(!p.cantidad||p.cantidad<1) e.push('Cantidad vendido '+(i+1)); });
     }
   }
+  if(id==='invfinal'){ invFinalList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario final '+(i+1)); }); }
   if(id==='premios'){ premiosList.forEach((p,i)=>{ if(!p.tipo) e.push('Premio '+(i+1)+' (kit o recipiente)'); if(!p.cantidad||p.cantidad<1) e.push('Cantidad del premio '+(i+1)); }); }
   if(id==='inventarios'){ inventarioList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario '+(i+1)); }); }
   if(id==='invcomp'){ invCompList.forEach((p,i)=>{ if(!p.sku) e.push('Producto inv. ini/fin '+(i+1)); if(p.cantidadInicial===''||p.cantidadInicial==null) e.push('Cantidad inicial '+(i+1)); if(p.cantidadFinal===''||p.cantidadFinal==null) e.push('Cantidad final '+(i+1)); }); }
@@ -1756,6 +1802,7 @@ function recolectarGestion(){
     ventaRealizada: (document.querySelector('input[name="ventaRealizada"]:checked')||{}).value||'',
     ventaMotivoNo: val('ventaMotivoNo'),
     ventaProductos: ventasList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad,precio:p.precio,subtotal:p.subtotal})),
+    inventarioFinal: invFinalList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad})),
     premiosEntregados: premiosList.map(p=>({id:p.id,tipo:p.tipo,cantidad:p.cantidad})),
     kitsEntregados: premiosList.length ? totalPremios('Kit') : '',
     recipientesEntregados: premiosList.length ? totalPremios('Recipiente') : '',
@@ -1846,9 +1893,10 @@ function generarTextoGestion(){
     ventasList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _x'+(p.cantidad||0)+'_ → $'+fmt(p.subtotal||0)+'\n'; });
     t+='   Total venta: $'+fmt(totalVentaValor())+'\n';
   }
-  t+='\n📦 *INVENTARIO*\n';
+  t+='\n📦 *INVENTARIO INICIAL*\n';
   if(inventarioList.length) inventarioList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _'+(p.cantidad||0)+' und_\n'; }); else t+='   • -\n';
   if(muestrasList.length){ t+='\n🧪 *MUESTRAS*\n'; muestrasList.forEach(m=>{ t+='   • '+(m.nombre||'-')+(m.categoria?' ['+m.categoria+']':'')+'  _x'+(m.cantidad||0)+'_\n'; }); }
+  if(invFinalList.length){ t+='\n📦 *INVENTARIO FINAL*\n'; invFinalList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _'+(p.cantidad||0)+' und_\n'; }); }
   if(premiosList.length){ t+='\n🎁 *PREMIOS*\n'; premiosList.forEach(p=>{ t+='   • '+(p.tipo||'-')+'  _x'+(p.cantidad||0)+'_\n'; }); }
   if(val('proximaVisita')) t+='\n📅 Próxima visita: '+val('proximaVisita')+'\n';
   if(val('observacionesGenerales')) t+='📝 '+val('observacionesGenerales')+'\n';
