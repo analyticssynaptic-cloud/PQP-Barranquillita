@@ -696,6 +696,44 @@
     </div>
   </section>
 
+  <!-- ACTIVIDAD DE LA COMPETENCIA -->
+  <section class="mod" data-mod="actcomp">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-alert"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Competencia</div><div class="card-sub">Actividades de la competencia en el PDV</div></div>
+        <span class="saved-badge" id="badge-actcomp"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div class="field"><label class="label label-req">¿Hay actividad de la competencia?</label>
+        <div class="opt-grid opt-grid-2">
+          <div class="opt"><input type="radio" name="hayActComp" id="acSi" value="Si"><label for="acSi"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>Sí</label></div>
+          <div class="opt"><input type="radio" name="hayActComp" id="acNo" value="No"><label for="acNo"><svg class="icon icon-sm chk"><use href="#i-check"/></svg>No</label></div>
+        </div>
+      </div>
+      <div id="actCompSi" style="display:none">
+        <div class="alert alert-warn" style="margin-bottom:14px"><svg class="icon"><use href="#i-camera"/></svg><div>Registra todo lo que puedas: cada actividad con su descripción y, si es posible, una foto de evidencia.</div></div>
+        <div id="listaActComp"></div>
+        <button type="button" class="btn btn-soft btn-block" onclick="agregarActComp()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar actividad</button>
+      </div>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('actcomp')"><svg class="icon"><use href="#i-save"/></svg>Guardar Competencia</button></div>
+    </div>
+  </section>
+
+  <!-- LEADS -->
+  <section class="mod" data-mod="leads">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-chip"><svg class="icon icon-lg"><use href="#i-user"/></svg></div>
+        <div class="card-head-text"><div class="card-title">Leads</div><div class="card-sub">Negocios cercanos que podrían ser clientes</div></div>
+        <span class="saved-badge" id="badge-leads"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
+      </div>
+      <div class="alert alert-warn" style="margin-bottom:14px"><svg class="icon"><use href="#i-pin"/></svg><div>Pregunta afuera del PDV por otros negocios o posibles clientes y registra al encargado.</div></div>
+      <div id="listaLeads"></div>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarLead()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar negocio</button>
+      <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('leads')"><svg class="icon"><use href="#i-save"/></svg>Guardar Leads</button></div>
+    </div>
+  </section>
+
   <!-- RESUMEN -->
   <section class="mod" data-mod="resumen">
     <div class="card">
@@ -719,13 +757,15 @@
 <!-- FLOWER -->
 <div class="flower-bd" id="flowerBd" onclick="closeFlower()"></div>
 <div class="flower" id="flower">
-  <button class="petal" data-mod="inicio" style="--x:-150px;--y:-90px"><span class="petal-ic"><svg><use href="#i-pin"/></svg></span><span class="petal-lbl">Ingreso</span></button>
-  <button class="petal" data-mod="inventarios" style="--x:-100px;--y:-140px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inv. Inicial</span></button>
-  <button class="petal" data-mod="ventas" style="--x:-50px;--y:-175px"><span class="petal-ic"><svg><use href="#i-cart"/></svg></span><span class="petal-lbl">Ventas</span></button>
-  <button class="petal" data-mod="muestras" style="--x:0px;--y:-190px"><span class="petal-ic"><svg><use href="#i-image"/></svg></span><span class="petal-lbl">Muestras</span></button>
-  <button class="petal" data-mod="premios" style="--x:50px;--y:-175px"><span class="petal-ic"><svg><use href="#i-star"/></svg></span><span class="petal-lbl">Premios</span></button>
-  <button class="petal" data-mod="invfinal" style="--x:100px;--y:-140px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inv. Final</span></button>
-  <button class="petal" data-mod="resumen" style="--x:150px;--y:-90px"><span class="petal-ic"><svg><use href="#i-list"/></svg></span><span class="petal-lbl">Resumen</span></button>
+  <button class="petal" data-mod="inicio" style="--x:-120px;--y:-150px"><span class="petal-ic"><svg><use href="#i-pin"/></svg></span><span class="petal-lbl">Ingreso</span></button>
+  <button class="petal" data-mod="inventarios" style="--x:-60px;--y:-175px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inv. Inicial</span></button>
+  <button class="petal" data-mod="ventas" style="--x:0px;--y:-185px"><span class="petal-ic"><svg><use href="#i-cart"/></svg></span><span class="petal-lbl">Ventas</span></button>
+  <button class="petal" data-mod="muestras" style="--x:60px;--y:-175px"><span class="petal-ic"><svg><use href="#i-image"/></svg></span><span class="petal-lbl">Muestras</span></button>
+  <button class="petal" data-mod="premios" style="--x:120px;--y:-150px"><span class="petal-ic"><svg><use href="#i-star"/></svg></span><span class="petal-lbl">Premios</span></button>
+  <button class="petal" data-mod="invfinal" style="--x:-90px;--y:-70px"><span class="petal-ic"><svg><use href="#i-box"/></svg></span><span class="petal-lbl">Inv. Final</span></button>
+  <button class="petal" data-mod="actcomp" style="--x:-30px;--y:-85px"><span class="petal-ic"><svg><use href="#i-alert"/></svg></span><span class="petal-lbl">Competencia</span></button>
+  <button class="petal" data-mod="leads" style="--x:30px;--y:-85px"><span class="petal-ic"><svg><use href="#i-user"/></svg></span><span class="petal-lbl">Leads</span></button>
+  <button class="petal" data-mod="resumen" style="--x:90px;--y:-70px"><span class="petal-ic"><svg><use href="#i-list"/></svg></span><span class="petal-lbl">Resumen</span></button>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -823,11 +863,13 @@ const MODS = [
   {id:'muestras',     icon:'i-image',   label:'Entrega muestras'},
   {id:'premios',      icon:'i-star',    label:'Premios'},
   {id:'invfinal',     icon:'i-box',     label:'Inventario Final'},
+  {id:'actcomp',      icon:'i-alert',   label:'Competencia'},
+  {id:'leads',        icon:'i-user',    label:'Leads'},
   {id:'resumen',      icon:'i-list',    label:'Resumen'}
 ];
 
 let parametrizacion = { ciudadesPDV:{}, skus:[], muestras:[], materialPOPCat:[] };
-let muestrasList = [], materialPopList = [], chequeoList = [], chequeoCompList = [], invCompList = [], premiosList = [], invFinalList = [];
+let muestrasList = [], materialPopList = [], chequeoList = [], chequeoCompList = [], invCompList = [], premiosList = [], invFinalList = [], leadsList = [], actCompList = [];
 let modoManual = false;
 let registroId = '';
 let saved = {};
@@ -863,6 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderFotoSlots('antes'); renderFotoSlots('despues');
   document.querySelectorAll('input[name="tieneExhibicion"]').forEach(r => r.addEventListener('change', onExhibicionChange));
   document.getElementById('descuento').addEventListener('input', calcularTotalFinal);
+  document.querySelectorAll('input[name="hayActComp"]').forEach(r => r.addEventListener('change', onActCompChange));
 
   // Persistencia automática ante cualquier cambio (debounced)
   let pt; const persistDeb = () => { clearTimeout(pt); pt=setTimeout(persistir, 600); };
@@ -1064,7 +1107,7 @@ function aplicarGestionRemota(registroIdRecuperado, g){
   registroId=registroIdRecuperado;
   ['nombreMercaderista','cedulaMercaderista','telefono','ventaMotivoNo','kitsEntregados','recipientesEntregados','descuento','observacionesGenerales','proximaVisita'].forEach(id=>{ const el=document.getElementById(id); if(el&&g[id]!=null) el.value=g[id]; });
   setRadio('ventaRealizada', g.ventaRealizada); setRadio('materialPOP', g.materialPOP); setRadio('tieneExhibicion', g.tieneExhibicionAdicional);
-  onVentaChange(); onExhibicionChange();
+  setRadio('hayActComp', g.competenciaActividad); onVentaChange(); onExhibicionChange(); onActCompChange();
   if(g.tipoExhibicionAdicional!=null){ const el=document.getElementById('tipoExhibicion'); if(el) el.value=g.tipoExhibicionAdicional; }
   const promos=(g.pedidoPromos||'').split(',').map(s=>s.trim()).filter(Boolean);
   ['promo1','promo2','promo3','promo4'].forEach(id=>{ const el=document.getElementById(id); if(el) el.checked=promos.indexOf(el.value)!==-1; });
@@ -1073,8 +1116,8 @@ function aplicarGestionRemota(registroIdRecuperado, g){
   else { aplicarPendCiudadPDV(); }
   const darId=list=>(list||[]).map(it=>Object.assign({id:uid('r')},it));
   productosPedido=darId(g.pedidoProductos); agotadosList=darId(g.agotados); fechasList=darId(g.fechasCortas); ventasList=darId(g.ventaProductos); inventarioList=darId(g.inventarioProductos); exhibicionList=darId(g.exhibicionAdicionalProductos);
-  muestrasList=darId(g.muestrasProductos); materialPopList=darId(g.materialPOPEntregado); chequeoList=darId(g.chequeoPrecios); chequeoCompList=darId(g.chequeoCompetencia); invCompList=darId(g.inventarioComparativo); premiosList=darId(g.premiosEntregados); invFinalList=darId(g.inventarioFinal);
-  renderInvFinal(); renderPremios(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
+  muestrasList=darId(g.muestrasProductos); materialPopList=darId(g.materialPOPEntregado); chequeoList=darId(g.chequeoPrecios); chequeoCompList=darId(g.chequeoCompetencia); invCompList=darId(g.inventarioComparativo); premiosList=darId(g.premiosEntregados); invFinalList=darId(g.inventarioFinal); leadsList=darId(g.leadsNegocios); actCompList=darId(g.actividadCompetencia);
+  renderInvFinal(); renderPremios(); renderLeads(); renderActComp(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
   fotoPerfil=''; fotoPerfilURL=g.fotoPerfilURL||'';
   if(fotoPerfilURL){ const box=document.getElementById('fotoIngresoBox'); if(box){ box.classList.add('has'); document.getElementById('fiTitle').textContent='Selfie lista ✓'; document.getElementById('fiSub').textContent='Toca para volver a tomar'; } }
   fotoExhibicionURL=g.fotoExhibicionURL||'';
@@ -1169,14 +1212,14 @@ function closeAyudas(){ ayudasOpen=false; document.getElementById('ayudas').clas
 function persistir(){
   if(restaurando) return;
   try{
-    const campos=recolectarGestion(); campos.fotoPerfil=''; campos.fotoExhibicion='';
+    const campos=recolectarGestion(); campos.fotoPerfil=''; campos.fotoExhibicion=''; campos.actividadCompetencia=(campos.actividadCompetencia||[]).map(x=>Object.assign({},x,{foto:''}));
     ['fotoAntes','fotoAntes2','fotoAntes3','fotoDespues','fotoDespues2','fotoDespues3'].forEach(k=>campos[k]='');
-    const data={ loggedIn:true, guardadoEn:Date.now(), registroId, saved, current, ubicacion, fotosAntesURL, fotosDespuesURL, fotoExhibicionURL, campos, listas:{ productosPedido, agotadosList, fechasList, ventasList, inventarioList, exhibicionList, muestrasList, materialPopList, chequeoList, chequeoCompList, invCompList, premiosList, invFinalList } };
+    const data={ loggedIn:true, guardadoEn:Date.now(), registroId, saved, current, ubicacion, fotosAntesURL, fotosDespuesURL, fotoExhibicionURL, campos, listas:{ productosPedido, agotadosList, fechasList, ventasList, inventarioList, exhibicionList, muestrasList, materialPopList, chequeoList, chequeoCompList, invCompList, premiosList, invFinalList, leadsList, actCompList: actCompList.map(x=>Object.assign({},x,{foto:''})) } };
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   }catch(e){}
 }
 // Las fotos base64 se guardan aparte y SOLO cuando cambian (evita lag en cada tecla/click)
-function persistirFotos(){ try{ localStorage.setItem(LS_FOTOS, JSON.stringify({ fotoPerfil, fotosAntes, fotosDespues, fotoExhibicion })); }catch(e){} }
+function persistirFotos(){ try{ localStorage.setItem(LS_FOTOS, JSON.stringify({ fotoPerfil, fotosAntes, fotosDespues, fotoExhibicion, actFotos: actCompList.reduce((o,x)=>{ if(x.foto) o[x.id]=x.foto; return o; },{}) })); }catch(e){} }
 function limpiarSesionLocal(){ try{ localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_FOTOS); }catch(e){} }
 function restaurarSesion(){
   let raw; try{ raw=localStorage.getItem(LS_KEY); }catch(e){ return false; }
@@ -1196,7 +1239,7 @@ function restaurarSesion(){
    'descuento','observacionesGenerales','proximaVisita'].forEach(id=>{ const el=document.getElementById(id); if(el&&g[id]!=null) el.value=g[id]; });
   // Radios
   setRadio('ventaRealizada', g.ventaRealizada); setRadio('materialPOP', g.materialPOP); setRadio('tieneExhibicion', g.tieneExhibicionAdicional);
-  onVentaChange(); onExhibicionChange();
+  setRadio('hayActComp', g.competenciaActividad); onVentaChange(); onExhibicionChange(); onActCompChange();
   // tipoExhibicion (select con clave diferente al id del DOM)
   if(g.tipoExhibicionAdicional!=null){ const el=document.getElementById('tipoExhibicion'); if(el) el.value=g.tipoExhibicionAdicional; }
   // Promos (desde string "a, b")
@@ -1209,7 +1252,7 @@ function restaurarSesion(){
   // Listas
   const L=d.listas||{};
   productosPedido=L.productosPedido||[]; agotadosList=L.agotadosList||[]; fechasList=L.fechasList||[]; ventasList=L.ventasList||[]; inventarioList=L.inventarioList||[]; exhibicionList=L.exhibicionList||[];
-  muestrasList=L.muestrasList||[]; materialPopList=L.materialPopList||[]; chequeoList=L.chequeoList||[]; chequeoCompList=L.chequeoCompList||[]; invCompList=L.invCompList||[]; premiosList=L.premiosList||[]; invFinalList=L.invFinalList||[];
+  muestrasList=L.muestrasList||[]; materialPopList=L.materialPopList||[]; chequeoList=L.chequeoList||[]; chequeoCompList=L.chequeoCompList||[]; invCompList=L.invCompList||[]; premiosList=L.premiosList||[]; invFinalList=L.invFinalList||[]; leadsList=L.leadsList||[]; actCompList=L.actCompList||[];
   renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalPedido(); calcularTotalVenta();
   // Ubicación
   ubicacion = d.ubicacion||{lat:null,lng:null,acc:null};
@@ -1231,6 +1274,7 @@ function restaurarSesion(){
   if(Array.isArray(fotos.fotosDespues)){ fotosDespues = fotos.fotosDespues.slice(0,3); while(fotosDespues.length<3) fotosDespues.push(''); }
   renderFotoSlots('antes'); renderFotoSlots('despues');
   if(fotos.fotoPerfil){ aplicarFoto('perfil', fotos.fotoPerfil); }
+  if(fotos.actFotos){ actCompList.forEach(x=>{ if(fotos.actFotos[x.id]) x.foto=fotos.actFotos[x.id]; }); renderActComp(); }
   if(fotos.fotoExhibicion){ aplicarFoto('exhibicion', fotos.fotoExhibicion); }
   else if(fotoExhibicionURL){ document.getElementById('imgExhibicion').src=fotoExhibicionURL; document.getElementById('defExhibicion').style.display='none'; document.getElementById('prevExhibicion').style.display='block'; document.getElementById('uploadExhibicion').classList.add('has'); }
   // Estado
@@ -1291,7 +1335,7 @@ function getPDV(){ return modoManual?document.getElementById('pdvTexto').value.t
 function onVentaChange(){ const v=(document.querySelector('input[name="ventaRealizada"]:checked')||{}).value; document.getElementById('ventaNo').style.display=v==='No'?'block':'none'; document.getElementById('ventaSi').style.display=v==='Si'?'block':'none'; if(v==='Si'&&ventasList.length===0&&!restaurando) agregarVenta(); }
 
 // ===== LISTAS (pedido / agotados / fechas) =====
-function findItem(id){ return productosPedido.find(x=>x.id===id) || agotadosList.find(x=>x.id===id) || fechasList.find(x=>x.id===id) || ventasList.find(x=>x.id===id) || inventarioList.find(x=>x.id===id) || exhibicionList.find(x=>x.id===id) || muestrasList.find(x=>x.id===id) || materialPopList.find(x=>x.id===id) || chequeoList.find(x=>x.id===id) || chequeoCompList.find(x=>x.id===id) || invCompList.find(x=>x.id===id) || premiosList.find(x=>x.id===id) || invFinalList.find(x=>x.id===id); }
+function findItem(id){ return productosPedido.find(x=>x.id===id) || agotadosList.find(x=>x.id===id) || fechasList.find(x=>x.id===id) || ventasList.find(x=>x.id===id) || inventarioList.find(x=>x.id===id) || exhibicionList.find(x=>x.id===id) || muestrasList.find(x=>x.id===id) || materialPopList.find(x=>x.id===id) || chequeoList.find(x=>x.id===id) || chequeoCompList.find(x=>x.id===id) || invCompList.find(x=>x.id===id) || premiosList.find(x=>x.id===id) || invFinalList.find(x=>x.id===id) || leadsList.find(x=>x.id===id) || actCompList.find(x=>x.id===id); }
 
 // Ventas (categoría + SKU + cantidad + precio/subtotal, para el total de venta y la regla de Evacuador)
 function agregarVenta(){ ventasList.push({id:uid('v'),categoria:'',sku:'',cantidad:1,precio:0,subtotal:0}); renderVentas(); calcularTotalVenta(); }
@@ -1342,6 +1386,57 @@ function alertaStock(cant){
   return '';
 }
 // Inventario final (categoría + SKU + cantidad en estante al salir)
+// ===== COMPETENCIA: ACTIVIDADES (con foto de evidencia) =====
+const TIPOS_ACT_COMP = ['Promoción / descuento','Precio especial','Exhibición especial','Impulsadora / degustación','Entrega de muestras o regalos','Material POP / publicidad','Nuevo producto','Otra'];
+function onActCompChange(){ const v=(document.querySelector('input[name="hayActComp"]:checked')||{}).value; document.getElementById('actCompSi').style.display=v==='Si'?'block':'none'; if(v==='Si'&&actCompList.length===0&&!restaurando) agregarActComp(); }
+function agregarActComp(){ actCompList.push({id:uid('ac'),competidor:'',tipo:'',descripcion:'',precio:'',foto:'',fotoURL:''}); renderActComp(); }
+function eliminarActComp(id){ actCompList=actCompList.filter(x=>x.id!==id); renderActComp(); persistir(); persistirFotos(); }
+function setActFld(id,campo,v){ const p=actCompList.find(x=>x.id===id); if(p) p[campo]=v; }
+function quitarFotoAct(id){ const p=actCompList.find(x=>x.id===id); if(p){ p.foto=''; p.fotoURL=''; renderActComp(); persistir(); persistirFotos(); } }
+function leerFotoAct(e,id){
+  const file=e.target.files[0]; if(!file) return;
+  if(file.size>25*1024*1024){ alert('La imagen es muy pesada (más de 25 MB).'); e.target.value=''; return; }
+  comprimirImagen(file,1280,0.7,data=>{
+    if(!data){ alert('No se pudo procesar la foto. Intenta de nuevo.'); e.target.value=''; return; }
+    const p=actCompList.find(x=>x.id===id); if(!p) return;
+    p.foto=data; p.fotoURL=''; renderActComp(); persistir(); persistirFotos();
+  });
+}
+function renderActComp(){
+  const cont=document.getElementById('listaActComp'); if(!cont) return; cont.innerHTML='';
+  if(actCompList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega la primera actividad observada.</div>'; return; }
+  actCompList.forEach((p,idx)=>{
+    const src=p.foto||p.fotoURL||'';
+    const tipos='<option value="">Seleccionar tipo</option>'+TIPOS_ACT_COMP.map(t=>'<option value="'+escAttr(t)+'"'+(p.tipo===t?' selected':'')+'>'+escHtml(t)+'</option>').join('');
+    const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-alert"/></svg>Actividad ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarActComp('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    <div class="field"><label class="label label-req">Competidor / marca</label><input type="text" class="input" placeholder="Ej: Fab, Ariel, marca local" value="${escAttr(p.competidor)}" oninput="setActFld('${p.id}','competidor',this.value)"></div>
+    <div class="field"><label class="label label-req">Tipo de actividad</label><select class="select" onchange="setActFld('${p.id}','tipo',this.value)">${tipos}</select></div>
+    <div class="field"><label class="label label-req">¿Qué están haciendo?</label><textarea class="textarea" placeholder="Describe la actividad: qué ofrecen, desde cuándo, cuánto cuesta, quién la hace..." oninput="setActFld('${p.id}','descripcion',this.value)">${escHtml(p.descripcion)}</textarea></div>
+    <div class="field"><label class="label">Precio u oferta observada <span class="label-hint">(opcional)</span></label><input type="text" class="input" placeholder="Ej: 2x1, \$4.500, 20% dto." value="${escAttr(p.precio)}" oninput="setActFld('${p.id}','precio',this.value)"></div>
+    <div class="field" style="margin-bottom:0"><label class="label">Foto de evidencia <span class="label-hint">(si puedes, toma todo)</span></label>
+      <div class="upload${src?' has':''}">
+        ${src?`<img class="preview-img" src="${src}"><div class="preview-act"><button type="button" class="btn btn-danger btn-sm" onclick="event.stopPropagation();quitarFotoAct('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg>Quitar</button></div>`:`<div class="upload-ic"><svg class="icon icon-lg"><use href="#i-camera"/></svg></div><div class="upload-t">Tomar o subir foto</div><div class="upload-h">Exhibición, precio, material, promotora...</div>`}
+        <input type="file" accept="image/*" capture="environment" onchange="leerFotoAct(event,'${p.id}')">
+      </div></div>`; cont.appendChild(d); });
+}
+// ===== LEADS (negocios cercanos / posibles clientes) =====
+function agregarLead(){ leadsList.push({id:uid('ld'),negocio:'',encargado:'',telefono:'',email:''}); renderLeads(); }
+function eliminarLead(id){ leadsList=leadsList.filter(x=>x.id!==id); renderLeads(); }
+function setLeadFld(id,campo,v){ const p=leadsList.find(x=>x.id===id); if(p) p[campo]=v; }
+function emailValido(e){ return !e || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+function renderLeads(){
+  const cont=document.getElementById('listaLeads'); if(!cont) return; cont.innerHTML='';
+  if(leadsList.length===0){ cont.innerHTML='<div class="empty-hint">Aún no hay negocios. Agrega el primero.</div>'; return; }
+  leadsList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-user"/></svg>Negocio ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarLead('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+    <div class="field"><label class="label label-req">Nombre del negocio</label><input type="text" class="input" placeholder="Ej: Tienda La Esperanza" value="${escAttr(p.negocio)}" oninput="setLeadFld('${p.id}','negocio',this.value)"></div>
+    <div class="field"><label class="label label-req">Encargado</label><input type="text" class="input" placeholder="Nombre del encargado" value="${escAttr(p.encargado)}" oninput="setLeadFld('${p.id}','encargado',this.value)"></div>
+    <div class="field-row" style="margin-bottom:0">
+      <div class="field" style="margin-bottom:0"><label class="label label-req">Teléfono del encargado</label><input type="tel" class="input" inputmode="tel" placeholder="Ej: 3001234567" value="${escAttr(p.telefono)}" oninput="setLeadFld('${p.id}','telefono',this.value)"></div>
+      <div class="field" style="margin-bottom:0"><label class="label">Email del encargado</label><input type="email" class="input" inputmode="email" placeholder="correo@ejemplo.com" value="${escAttr(p.email)}" oninput="setLeadFld('${p.id}','email',this.value)"></div>
+    </div>`; cont.appendChild(d); });
+}
 function agregarInvFinal(){ invFinalList.push({id:uid('nf'),categoria:'',sku:'',cantidad:0}); renderInvFinal(); }
 function eliminarInvFinal(id){ invFinalList=invFinalList.filter(x=>x.id!==id); renderInvFinal(); }
 function traerInvFinal(){
@@ -1501,7 +1596,7 @@ function setCategoriaItem(id, valor){
   if('precio' in p){ p.precio=0; p.subtotal=0; calcularTotalPedido(); subDOM('listaPedido',productosPedido,p); }
 }
 // Re-render de las listas para refrescar opciones cuando llegan los SKU de la API
-function poblarSkus(){ renderInvFinal(); renderPremios(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalVenta(); }
+function poblarSkus(){ renderInvFinal(); renderPremios(); renderLeads(); renderActComp(); renderInvComp(); renderPedido(); renderAgotados(); renderFechas(); renderVentas(); renderInventario(); renderExhibicion(); renderMuestras(); renderMaterialPop(); renderChequeo(); calcularTotalVenta(); }
 
 // ===== CASCADA GENÉRICA (Muestras / Material POP: catálogo nombre+categoría) =====
 function campoCascadaCatalogo(p, catalogo){
@@ -1732,6 +1827,12 @@ function renderResumen(){
 
   const prH = premiosList.length ? premiosList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.tipo)||'—')+'</b> · '+(p.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin premios entregados</div>';
   h+=secRaw('i-star','Premios ('+premiosList.length+')', prH);
+  const hayAC=(document.querySelector('input[name="hayActComp"]:checked')||{}).value||'';
+  let acH='<div class="res-line"><span class="rk">¿Actividad de la competencia?</span><span class="rv">'+(hayAC||'—')+'</span></div>';
+  if(hayAC==='Si') acH+=actCompList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.competidor)||'—')+'</b> · '+(escHtml(p.tipo)||'—')+(p.precio?' · '+escHtml(p.precio):'')+'<br>'+escHtml(p.descripcion||'')+((p.foto||p.fotoURL)?' · 📷':'')+'</div>').join('');
+  h+=secRaw('i-alert','Competencia'+(hayAC==='Si'?' ('+actCompList.length+')':''), acH);
+  const ldH = leadsList.length ? leadsList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.negocio)||'—')+'</b> · '+(escHtml(p.encargado)||'—')+' · '+(escHtml(p.telefono)||'—')+(p.email?' · '+escHtml(p.email):'')+'</div>').join('') : '<div class="res-mini">Sin leads registrados</div>';
+  h+=secRaw('i-user','Leads ('+leadsList.length+')', ldH);
 
   h+='<div class="res-sec-h" style="margin-top:4px"><svg class="icon icon-sm"><use href="#i-list"/></svg>Estado de módulos</div>';
   h+=MODS.filter(m=>m.id!=='resumen').map(m=>'<div class="mod-state"><div class="ms-ic"><svg class="icon icon-sm"><use href="#'+m.icon+'"/></svg></div><div class="ms-name">'+m.label+'</div><span class="ms-tag '+(saved[m.id]?'ok':'no')+'">'+(saved[m.id]?'Guardado':'Pendiente')+'</span></div>').join('');
@@ -1760,6 +1861,8 @@ function validarModulo(id){
       ventasList.forEach((p,i)=>{ if(!p.sku) e.push('SKU vendido '+(i+1)); if(!p.cantidad||p.cantidad<1) e.push('Cantidad vendido '+(i+1)); });
     }
   }
+  if(id==='actcomp'){ const v=(document.querySelector('input[name="hayActComp"]:checked')||{}).value; if(!v) e.push('¿Hay actividad de la competencia?'); if(v==='Si'){ if(actCompList.length===0) e.push('Agrega al menos una actividad'); actCompList.forEach((p,i)=>{ if(!(p.competidor||'').trim()) e.push('Competidor de la actividad '+(i+1)); if(!p.tipo) e.push('Tipo de la actividad '+(i+1)); if(!(p.descripcion||'').trim()) e.push('Descripción de la actividad '+(i+1)); }); } }
+  if(id==='leads'){ leadsList.forEach((p,i)=>{ const t=(p.telefono||'').replace(/\D/g,''); if(!(p.negocio||'').trim()) e.push('Nombre del negocio '+(i+1)); if(!(p.encargado||'').trim()) e.push('Encargado del negocio '+(i+1)); if(t.length<7) e.push('Teléfono del encargado '+(i+1)+' (mínimo 7 dígitos)'); if(!emailValido((p.email||'').trim())) e.push('Email del encargado '+(i+1)+' no es válido'); }); }
   if(id==='invfinal'){ invFinalList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario final '+(i+1)); }); }
   if(id==='premios'){ premiosList.forEach((p,i)=>{ if(!p.tipo) e.push('Premio '+(i+1)+' (kit o recipiente)'); if(!p.cantidad||p.cantidad<1) e.push('Cantidad del premio '+(i+1)); }); }
   if(id==='inventarios'){ inventarioList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario '+(i+1)); }); }
@@ -1803,6 +1906,9 @@ function recolectarGestion(){
     ventaMotivoNo: val('ventaMotivoNo'),
     ventaProductos: ventasList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad,precio:p.precio,subtotal:p.subtotal})),
     inventarioFinal: invFinalList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad})),
+    competenciaActividad: (document.querySelector('input[name="hayActComp"]:checked')||{}).value||'',
+    actividadCompetencia: ((document.querySelector('input[name="hayActComp"]:checked')||{}).value==='Si') ? actCompList.map(p=>({id:p.id,competidor:(p.competidor||'').trim(),tipo:p.tipo,descripcion:(p.descripcion||'').trim(),precio:(p.precio||'').trim(),foto:p.foto||'',fotoURL:p.fotoURL||''})) : [],
+    leadsNegocios: leadsList.map(p=>({id:p.id,negocio:(p.negocio||'').trim(),encargado:(p.encargado||'').trim(),telefono:(p.telefono||'').trim(),email:(p.email||'').trim()})),
     premiosEntregados: premiosList.map(p=>({id:p.id,tipo:p.tipo,cantidad:p.cantidad})),
     kitsEntregados: premiosList.length ? totalPremios('Kit') : '',
     recipientesEntregados: premiosList.length ? totalPremios('Recipiente') : '',
@@ -1856,6 +1962,7 @@ async function guardarModulo(id, finalizar){
       });
       if(touched){ renderFotoSlots('antes'); renderFotoSlots('despues'); }
       if(data.fotoExhibicionURL){ fotoExhibicionURL=data.fotoExhibicionURL; fotoExhibicion=''; }
+      if(data.fotosActividad){ let t2=false; Object.keys(data.fotosActividad).forEach(k=>{ const a=actCompList.find(x=>x.id===k); if(a){ a.fotoURL=data.fotosActividad[k]; a.foto=''; t2=true; } }); if(t2){ renderActComp(); persistirFotos(); } }
       renderNav(); persistir();
       if(finalizar){ mostrarExito(data); }
       else if(enviarCorreo){ toast(data.correoEnviado?'Sugerido guardado y enviado por correo':'Sugerido guardado (correo no enviado: falta destinatario en el backend)', !data.correoEnviado); }
@@ -1897,6 +2004,8 @@ function generarTextoGestion(){
   if(inventarioList.length) inventarioList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _'+(p.cantidad||0)+' und_\n'; }); else t+='   • -\n';
   if(muestrasList.length){ t+='\n🧪 *MUESTRAS*\n'; muestrasList.forEach(m=>{ t+='   • '+(m.nombre||'-')+(m.categoria?' ['+m.categoria+']':'')+'  _x'+(m.cantidad||0)+'_\n'; }); }
   if(invFinalList.length){ t+='\n📦 *INVENTARIO FINAL*\n'; invFinalList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _'+(p.cantidad||0)+' und_\n'; }); }
+  if((document.querySelector('input[name="hayActComp"]:checked')||{}).value==='Si' && actCompList.length){ t+='\n🕵️ *COMPETENCIA*\n'; actCompList.forEach(p=>{ t+='   • '+(p.competidor||'-')+' ('+(p.tipo||'-')+')'+(p.precio?' '+p.precio:'')+': '+(p.descripcion||'-')+'\n'; }); }
+  if(leadsList.length){ t+='\n🤝 *LEADS*\n'; leadsList.forEach(p=>{ t+='   • '+(p.negocio||'-')+' — '+(p.encargado||'-')+' · '+(p.telefono||'-')+(p.email?' · '+p.email:'')+'\n'; }); }
   if(premiosList.length){ t+='\n🎁 *PREMIOS*\n'; premiosList.forEach(p=>{ t+='   • '+(p.tipo||'-')+'  _x'+(p.cantidad||0)+'_\n'; }); }
   if(val('proximaVisita')) t+='\n📅 Próxima visita: '+val('proximaVisita')+'\n';
   if(val('observacionesGenerales')) t+='📝 '+val('observacionesGenerales')+'\n';
