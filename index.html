@@ -497,10 +497,10 @@
     <div class="card">
       <div class="card-head">
         <div class="card-chip"><svg class="icon icon-lg"><use href="#i-star"/></svg></div>
-        <div class="card-head-text"><div class="card-title">Premios</div><div class="card-sub">Kit o recipiente entregado</div></div>
+        <div class="card-head-text"><div class="card-title">Premios</div><div class="card-sub">Kit 1, Kit 2 y recipiente plástico entregados</div></div>
         <span class="saved-badge" id="badge-premios"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
       </div>
-      <div class="alert alert-warn" id="kitAviso" style="display:none"><svg class="icon"><use href="#i-star"/></svg><div><strong>La compra aplica para el kit.</strong><div style="margin-top:2px">Kit: <span id="kitContenido"></span></div></div></div>
+      <div class="alert alert-warn" id="kitAviso" style="display:none"><svg class="icon"><use href="#i-star"/></svg><div><strong>La compra aplica para obsequio.</strong><div style="margin-top:2px" id="kitContenido"></div></div></div>
       <div id="listaPremios"></div>
       <button type="button" class="btn btn-soft btn-block" onclick="agregarPremio()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar premio entregado</button>
       <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('premios')"><svg class="icon"><use href="#i-save"/></svg>Guardar Premios</button></div>
@@ -851,7 +851,13 @@ const LS_KEY = 'pqp_session_v1';
 const LS_FOTOS = 'pqp_fotos_v1';
 const HORA_CIERRE = 23;        // la sesión dura todo el día y se cierra sola a las 11 pm
 const KIT_UMBRAL = 20000;      // compra desde la cual aplica la mecánica del kit (solo informativo; siempre se pregunta)
-const KIT_CONTENIDO = 'Detergente polvo 125 g + Detergente líquido 110 g + Suavizante 110 g';
+// Obsequios: 2 kits + 1 recipiente plástico
+const PREMIOS_CAT = [
+  {tipo:'Kit 1',               desc:'Detergente líquido 110 g + Suavizante 110 g'},
+  {tipo:'Kit 2',               desc:'Quitagrasas + Limpiavidrios'},
+  {tipo:'Recipiente plástico', desc:'Recipiente plástico'}
+];
+function descPremio(t){ const c=PREMIOS_CAT.find(x=>x.tipo===t); return c?c.desc:''; }
 const VENTAS_SOLO_SABADO = false;
 function diaClave(ms){ const d=new Date(ms||Date.now()); return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2); }
 
@@ -1361,7 +1367,7 @@ function calcularTotalVenta(){
   const total=totalVentaValor();
   const elTotal=document.getElementById('totalVenta'); if(elTotal) elTotal.textContent='$'+fmt(total);
   const av=document.getElementById('kitAviso'); if(av) av.style.display=kitAplica()?'flex':'none';
-  const kc=document.getElementById('kitContenido'); if(kc) kc.textContent=KIT_CONTENIDO;
+  const kc=document.getElementById('kitContenido'); if(kc) kc.innerHTML=PREMIOS_CAT.map(c=>'• <b>'+escHtml(c.tipo)+':</b> '+escHtml(c.desc)).join('<br>');
   return total;
 }
 
@@ -1466,16 +1472,21 @@ function agregarPremio(){ premiosList.push({id:uid('pr'),tipo:'',cantidad:1}); r
 function eliminarPremio(id){ premiosList=premiosList.filter(x=>x.id!==id); renderPremios(); }
 function setPremioFld(id,campo,v){ const p=premiosList.find(x=>x.id===id); if(p) p[campo]= campo==='cantidad'?(parseFloat(v)||0):v; }
 function totalPremios(tipo){ return premiosList.filter(p=>p.tipo===tipo).reduce((s,p)=>s+(p.cantidad||0),0); }
+function totalRecipientes(){ return totalPremios('Recipiente plástico')+totalPremios('Recipiente'); }
 function renderPremios(){
   const cont=document.getElementById('listaPremios'); if(!cont) return; cont.innerHTML='';
   calcularTotalVenta();
-  if(premiosList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega el kit o recipiente entregado.</div>'; return; }
-  premiosList.forEach((p,idx)=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`
-    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-star"/></svg>Premio ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarPremio('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
+  if(premiosList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega los obsequios entregados (Kit 1, Kit 2 o Recipiente plástico).</div>'; return; }
+  premiosList.forEach((p,idx)=>{
+    const tipos=PREMIOS_CAT.map(c=>c.tipo); if(p.tipo && tipos.indexOf(p.tipo)===-1) tipos.push(p.tipo); // conserva valores antiguos (ej. "Kit")
+    const opts='<option value="">Seleccionar</option>'+tipos.map(t=>'<option value="'+escAttr(t)+'"'+(p.tipo===t?' selected':'')+'>'+escHtml(t)+'</option>').join('');
+    const d=document.createElement('div'); d.className='item'; d.innerHTML=`
+    <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-star"/></svg>Obsequio ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarPremio('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
     <div class="field-row">
-      <div class="field" style="margin-bottom:0"><label class="label label-req">Premio</label><select class="select" onchange="setPremioFld('${p.id}','tipo',this.value)"><option value="">Seleccionar</option><option value="Kit"${p.tipo==='Kit'?' selected':''}>Kit</option><option value="Recipiente"${p.tipo==='Recipiente'?' selected':''}>Recipiente</option></select></div>
+      <div class="field" style="margin-bottom:0"><label class="label label-req">Obsequio</label><select class="select" onchange="setPremioFld('${p.id}','tipo',this.value);renderPremios()">${opts}</select></div>
       <div class="field" style="margin-bottom:0"><label class="label label-req">Cantidad</label><input type="number" class="input" min="1" inputmode="numeric" value="${p.cantidad}" oninput="setPremioFld('${p.id}','cantidad',this.value)"></div>
-    </div>`; cont.appendChild(d); });
+    </div>
+    ${descPremio(p.tipo)?'<div class="res-mini" style="margin-top:8px">Contiene: <b>'+escHtml(descPremio(p.tipo))+'</b></div>':''}`; cont.appendChild(d); });
 }
 // Inventario inicial vs final (categoría + SKU + cantidad al llegar + cantidad al salir)
 function agregarInvComp(){ invCompList.push({id:uid('ic'),categoria:'',sku:'',cantidadInicial:'',cantidadFinal:''}); renderInvComp(); }
@@ -1825,7 +1836,7 @@ function renderResumen(){
   const muH = muestrasList.length ? muestrasList.map((m,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(m.nombre)||'—')+'</b>'+(m.categoria?' ['+escHtml(m.categoria)+']':'')+' · '+(m.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin muestras registradas</div>';
   h+=secRaw('i-image','Muestras ('+muestrasList.length+')', muH);
 
-  const prH = premiosList.length ? premiosList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.tipo)||'—')+'</b> · '+(p.cantidad||0)+' und</div>').join('') : '<div class="res-mini">Sin premios entregados</div>';
+  const prH = premiosList.length ? premiosList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.tipo)||'—')+'</b> · '+(p.cantidad||0)+' und'+(descPremio(p.tipo)?' <span style="color:var(--muted)">('+escHtml(descPremio(p.tipo))+')</span>':'')+'</div>').join('') : '<div class="res-mini">Sin premios entregados</div>';
   h+=secRaw('i-star','Premios ('+premiosList.length+')', prH);
   const hayAC=(document.querySelector('input[name="hayActComp"]:checked')||{}).value||'';
   let acH='<div class="res-line"><span class="rk">¿Actividad de la competencia?</span><span class="rv">'+(hayAC||'—')+'</span></div>';
@@ -1864,7 +1875,7 @@ function validarModulo(id){
   if(id==='actcomp'){ const v=(document.querySelector('input[name="hayActComp"]:checked')||{}).value; if(!v) e.push('¿Hay actividad de la competencia?'); if(v==='Si'){ if(actCompList.length===0) e.push('Agrega al menos una actividad'); actCompList.forEach((p,i)=>{ if(!(p.competidor||'').trim()) e.push('Competidor de la actividad '+(i+1)); if(!p.tipo) e.push('Tipo de la actividad '+(i+1)); if(!(p.descripcion||'').trim()) e.push('Descripción de la actividad '+(i+1)); }); } }
   if(id==='leads'){ leadsList.forEach((p,i)=>{ const t=(p.telefono||'').replace(/\D/g,''); if(!(p.negocio||'').trim()) e.push('Nombre del negocio '+(i+1)); if(!(p.encargado||'').trim()) e.push('Encargado del negocio '+(i+1)); if(t.length<7) e.push('Teléfono del encargado '+(i+1)+' (mínimo 7 dígitos)'); if(!emailValido((p.email||'').trim())) e.push('Email del encargado '+(i+1)+' no es válido'); }); }
   if(id==='invfinal'){ invFinalList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario final '+(i+1)); }); }
-  if(id==='premios'){ premiosList.forEach((p,i)=>{ if(!p.tipo) e.push('Premio '+(i+1)+' (kit o recipiente)'); if(!p.cantidad||p.cantidad<1) e.push('Cantidad del premio '+(i+1)); }); }
+  if(id==='premios'){ premiosList.forEach((p,i)=>{ if(!p.tipo) e.push('Obsequio '+(i+1)+' (Kit 1, Kit 2 o Recipiente)'); if(!p.cantidad||p.cantidad<1) e.push('Cantidad del obsequio '+(i+1)); }); }
   if(id==='inventarios'){ inventarioList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario '+(i+1)); }); }
   if(id==='invcomp'){ invCompList.forEach((p,i)=>{ if(!p.sku) e.push('Producto inv. ini/fin '+(i+1)); if(p.cantidadInicial===''||p.cantidadInicial==null) e.push('Cantidad inicial '+(i+1)); if(p.cantidadFinal===''||p.cantidadFinal==null) e.push('Cantidad final '+(i+1)); }); }
   if(id==='fotos'){
@@ -1909,9 +1920,11 @@ function recolectarGestion(){
     competenciaActividad: (document.querySelector('input[name="hayActComp"]:checked')||{}).value||'',
     actividadCompetencia: ((document.querySelector('input[name="hayActComp"]:checked')||{}).value==='Si') ? actCompList.map(p=>({id:p.id,competidor:(p.competidor||'').trim(),tipo:p.tipo,descripcion:(p.descripcion||'').trim(),precio:(p.precio||'').trim(),foto:p.foto||'',fotoURL:p.fotoURL||''})) : [],
     leadsNegocios: leadsList.map(p=>({id:p.id,negocio:(p.negocio||'').trim(),encargado:(p.encargado||'').trim(),telefono:(p.telefono||'').trim(),email:(p.email||'').trim()})),
-    premiosEntregados: premiosList.map(p=>({id:p.id,tipo:p.tipo,cantidad:p.cantidad})),
-    kitsEntregados: premiosList.length ? totalPremios('Kit') : '',
-    recipientesEntregados: premiosList.length ? totalPremios('Recipiente') : '',
+    premiosEntregados: premiosList.map(p=>({id:p.id,tipo:p.tipo,cantidad:p.cantidad,contenido:descPremio(p.tipo)})),
+    kit1Entregados: premiosList.length ? totalPremios('Kit 1') : '',
+    kit2Entregados: premiosList.length ? totalPremios('Kit 2') : '',
+    kitsEntregados: premiosList.length ? totalPremios('Kit 1')+totalPremios('Kit 2')+totalPremios('Kit') : '',
+    recipientesEntregados: premiosList.length ? totalRecipientes() : '',
     materialPOP: pop,
     inventarioProductos: inventarioList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad})),
     inventarioComparativo: invCompList.map(p=>{ const d=difInvComp(p); return {id:p.id,categoria:p.categoria,sku:p.sku,cantidadInicial:p.cantidadInicial,cantidadFinal:p.cantidadFinal,diferencia:d===null?'':d}; }),
@@ -2006,7 +2019,7 @@ function generarTextoGestion(){
   if(invFinalList.length){ t+='\n📦 *INVENTARIO FINAL*\n'; invFinalList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _'+(p.cantidad||0)+' und_\n'; }); }
   if((document.querySelector('input[name="hayActComp"]:checked')||{}).value==='Si' && actCompList.length){ t+='\n🕵️ *COMPETENCIA*\n'; actCompList.forEach(p=>{ t+='   • '+(p.competidor||'-')+' ('+(p.tipo||'-')+')'+(p.precio?' '+p.precio:'')+': '+(p.descripcion||'-')+'\n'; }); }
   if(leadsList.length){ t+='\n🤝 *LEADS*\n'; leadsList.forEach(p=>{ t+='   • '+(p.negocio||'-')+' — '+(p.encargado||'-')+' · '+(p.telefono||'-')+(p.email?' · '+p.email:'')+'\n'; }); }
-  if(premiosList.length){ t+='\n🎁 *PREMIOS*\n'; premiosList.forEach(p=>{ t+='   • '+(p.tipo||'-')+'  _x'+(p.cantidad||0)+'_\n'; }); }
+  if(premiosList.length){ t+='\n🎁 *OBSEQUIOS*\n'; premiosList.forEach(p=>{ t+='   • '+(p.tipo||'-')+(descPremio(p.tipo)?' ('+descPremio(p.tipo)+')':'')+'  _x'+(p.cantidad||0)+'_\n'; }); }
   if(val('proximaVisita')) t+='\n📅 Próxima visita: '+val('proximaVisita')+'\n';
   if(val('observacionesGenerales')) t+='📝 '+val('observacionesGenerales')+'\n';
   t+='\n_Enviado desde Captura PQP_';
