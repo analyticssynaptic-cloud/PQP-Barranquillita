@@ -500,9 +500,13 @@
         <div class="card-head-text"><div class="card-title">Premios</div><div class="card-sub">Kit 1, Kit 2 y recipiente plástico entregados</div></div>
         <span class="saved-badge" id="badge-premios"><svg class="icon icon-sm"><use href="#i-check"/></svg>Guardado</span>
       </div>
+      <div class="item" id="premiosGuia" style="background:var(--blue-soft);border-color:var(--line-strong)">
+        <div class="res-sec-h" style="margin-bottom:8px"><svg class="icon icon-sm"><use href="#i-star"/></svg>¿Qué lleva cada obsequio?</div>
+        <div id="premiosGuiaLista"></div>
+      </div>
       <div class="alert alert-warn" id="kitAviso" style="display:none"><svg class="icon"><use href="#i-star"/></svg><div><strong>La compra aplica para obsequio.</strong><div style="margin-top:2px" id="kitContenido"></div></div></div>
       <div id="listaPremios"></div>
-      <button type="button" class="btn btn-soft btn-block" onclick="agregarPremio()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar premio entregado</button>
+      <button type="button" class="btn btn-soft btn-block" onclick="agregarPremio()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Agregar obsequio entregado</button>
       <div class="save-row"><button class="btn btn-primary btn-block" onclick="guardarModulo('premios')"><svg class="icon"><use href="#i-save"/></svg>Guardar Premios</button></div>
     </div>
   </section>
@@ -857,6 +861,7 @@ const PREMIOS_CAT = [
   {tipo:'Kit 2',               desc:'Quitagrasas + Limpiavidrios'},
   {tipo:'Recipiente plástico', desc:'Recipiente plástico'}
 ];
+function pintarPremiosGuia(){ const g=document.getElementById('premiosGuiaLista'); if(g) g.innerHTML=PREMIOS_CAT.map(c=>'<div class="res-line"><span class="rk"><b style="color:var(--ink)">'+escHtml(c.tipo)+'</b></span><span class="rv" style="font-weight:500">'+escHtml(c.desc)+'</span></div>').join(''); }
 function descPremio(t){ const c=PREMIOS_CAT.find(x=>x.tipo===t); return c?c.desc:''; }
 const VENTAS_SOLO_SABADO = false;
 function diaClave(ms){ const d=new Date(ms||Date.now()); return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2); }
@@ -897,7 +902,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Enlaces de material de apoyo (dentro del panel persona)
   document.getElementById('ayudaDrive').href = AYUDAS.drive;
 
-  cargarParametrizacion();
+  cargarParametrizacion(); pintarPremiosGuia();
 
   document.getElementById('nombreMercaderista').addEventListener('input', onIdentChange);
   document.getElementById('cedulaMercaderista').addEventListener('input', onIdentChange);
@@ -936,11 +941,18 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===== NAV =====
 function identDone(){ return !!(val('nombreMercaderista') && val('cedulaMercaderista')); }
 function esSabado(){ return new Date().getDay() === 6; } // 0=domingo...6=sábado
-function modAvailable(id){ return id !== 'ventas' || !VENTAS_SOLO_SABADO || esSabado(); }
+function ingresoGuardado(){ return !!saved['inicio']; }
+function ventasDelDia(){ return !VENTAS_SOLO_SABADO || esSabado(); }
+function modAvailable(id){ if(id==='inicio') return true; if(!ingresoGuardado()) return false; return id!=='ventas' || ventasDelDia(); }
 function availableMods(){ return MODS.slice(); }
 
 function goTo(id){
-  if(!modAvailable(id)){ toast('El módulo de Ventas solo está disponible los sábados', true); closeFlower(); return; }
+  if(!modAvailable(id)){
+    toast(!ingresoGuardado() ? 'Primero guarda tu Ingreso para habilitar los demás módulos' : 'El módulo de Ventas solo está disponible los sábados', true);
+    closeFlower();
+    if(!ingresoGuardado() && current!=='inicio'){ current='inicio'; renderNav(); }
+    return;
+  }
   current=id; renderNav(); closeFlower();
   if(id==='resumen') renderResumen();
 }
@@ -1474,12 +1486,13 @@ function setPremioFld(id,campo,v){ const p=premiosList.find(x=>x.id===id); if(p)
 function totalPremios(tipo){ return premiosList.filter(p=>p.tipo===tipo).reduce((s,p)=>s+(p.cantidad||0),0); }
 function totalRecipientes(){ return totalPremios('Recipiente plástico')+totalPremios('Recipiente'); }
 function renderPremios(){
+  pintarPremiosGuia();
   const cont=document.getElementById('listaPremios'); if(!cont) return; cont.innerHTML='';
   calcularTotalVenta();
-  if(premiosList.length===0){ cont.innerHTML='<div class="empty-hint">Agrega los obsequios entregados (Kit 1, Kit 2 o Recipiente plástico).</div>'; return; }
+  if(premiosList.length===0){ cont.innerHTML='<div class="empty-hint">Toca "Agregar obsequio entregado" y elige Kit 1, Kit 2 o Recipiente plástico.</div>'; return; }
   premiosList.forEach((p,idx)=>{
     const tipos=PREMIOS_CAT.map(c=>c.tipo); if(p.tipo && tipos.indexOf(p.tipo)===-1) tipos.push(p.tipo); // conserva valores antiguos (ej. "Kit")
-    const opts='<option value="">Seleccionar</option>'+tipos.map(t=>'<option value="'+escAttr(t)+'"'+(p.tipo===t?' selected':'')+'>'+escHtml(t)+'</option>').join('');
+    const opts='<option value="">Seleccionar</option>'+tipos.map(t=>'<option value="'+escAttr(t)+'"'+(p.tipo===t?' selected':'')+'>'+escHtml(t)+(descPremio(t)&&t!=='Recipiente plástico'?' — '+escHtml(descPremio(t)):'')+'</option>').join('');
     const d=document.createElement('div'); d.className='item'; d.innerHTML=`
     <div class="item-head"><div class="item-title"><svg class="icon icon-sm"><use href="#i-star"/></svg>Obsequio ${idx+1}</div><button type="button" class="btn btn-danger btn-icon" onclick="eliminarPremio('${p.id}')"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button></div>
     <div class="field-row">
@@ -1863,7 +1876,7 @@ function validarModulo(id){
     if(!getPDV()) e.push('Punto de venta');
   }
   if(id==='ventas'){
-    if(!modAvailable('ventas')) e.push('El módulo de Ventas solo está disponible los sábados');
+    if(!ventasDelDia()) e.push('El módulo de Ventas solo está disponible los sábados');
     const v=(document.querySelector('input[name="ventaRealizada"]:checked')||{}).value;
     if(!v) e.push('¿Se realizó venta?');
     if(v==='No'&&!val('ventaMotivoNo')) e.push('Motivo de no venta');
