@@ -1439,7 +1439,7 @@ function renderActComp(){
       </div></div>`; cont.appendChild(d); });
 }
 // ===== LEADS (negocios cercanos / posibles clientes) =====
-function agregarLead(){ leadsList.push({id:uid('ld'),negocio:'',encargado:'',telefono:'',email:''}); renderLeads(); }
+function agregarLead(){ leadsList.push({id:uid('ld'),negocio:'',encargado:'',telefono:'',email:'',interes:''}); renderLeads(); }
 function eliminarLead(id){ leadsList=leadsList.filter(x=>x.id!==id); renderLeads(); }
 function setLeadFld(id,campo,v){ const p=leadsList.find(x=>x.id===id); if(p) p[campo]=v; }
 function emailValido(e){ return !e || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
@@ -1453,7 +1453,8 @@ function renderLeads(){
     <div class="field-row" style="margin-bottom:0">
       <div class="field" style="margin-bottom:0"><label class="label label-req">Teléfono del encargado</label><input type="tel" class="input" inputmode="tel" placeholder="Ej: 3001234567" value="${escAttr(p.telefono)}" oninput="setLeadFld('${p.id}','telefono',this.value)"></div>
       <div class="field" style="margin-bottom:0"><label class="label">Email del encargado</label><input type="email" class="input" inputmode="email" placeholder="correo@ejemplo.com" value="${escAttr(p.email)}" oninput="setLeadFld('${p.id}','email',this.value)"></div>
-    </div>`; cont.appendChild(d); });
+    </div>
+    <div class="field" style="margin:11px 0 0"><label class="label label-req">Interés / productos de interés</label><textarea class="textarea" placeholder="¿Qué productos le interesan? Ej: detergente en polvo, suavizante, limpiapisos..." oninput="setLeadFld('${p.id}','interes',this.value)">${escHtml(p.interes||'')}</textarea></div>`; cont.appendChild(d); });
 }
 function agregarInvFinal(){ invFinalList.push({id:uid('nf'),categoria:'',sku:'',cantidad:0}); renderInvFinal(); }
 function eliminarInvFinal(id){ invFinalList=invFinalList.filter(x=>x.id!==id); renderInvFinal(); }
@@ -1855,7 +1856,7 @@ function renderResumen(){
   let acH='<div class="res-line"><span class="rk">¿Actividad de la competencia?</span><span class="rv">'+(hayAC||'—')+'</span></div>';
   if(hayAC==='Si') acH+=actCompList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.competidor)||'—')+'</b> · '+(escHtml(p.tipo)||'—')+(p.precio?' · '+escHtml(p.precio):'')+'<br>'+escHtml(p.descripcion||'')+((p.foto||p.fotoURL)?' · 📷':'')+'</div>').join('');
   h+=secRaw('i-alert','Competencia'+(hayAC==='Si'?' ('+actCompList.length+')':''), acH);
-  const ldH = leadsList.length ? leadsList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.negocio)||'—')+'</b> · '+(escHtml(p.encargado)||'—')+' · '+(escHtml(p.telefono)||'—')+(p.email?' · '+escHtml(p.email):'')+'</div>').join('') : '<div class="res-mini">Sin leads registrados</div>';
+  const ldH = leadsList.length ? leadsList.map((p,i)=>'<div class="res-mini">'+(i+1)+'. <b>'+(escHtml(p.negocio)||'—')+'</b> · '+(escHtml(p.encargado)||'—')+' · '+(escHtml(p.telefono)||'—')+(p.email?' · '+escHtml(p.email):'')+(p.interes?'<br>Interés: '+escHtml(p.interes):'')+'</div>').join('') : '<div class="res-mini">Sin leads registrados</div>';
   h+=secRaw('i-user','Leads ('+leadsList.length+')', ldH);
 
   h+='<div class="res-sec-h" style="margin-top:4px"><svg class="icon icon-sm"><use href="#i-list"/></svg>Estado de módulos</div>';
@@ -1886,7 +1887,7 @@ function validarModulo(id){
     }
   }
   if(id==='actcomp'){ const v=(document.querySelector('input[name="hayActComp"]:checked')||{}).value; if(!v) e.push('¿Hay actividad de la competencia?'); if(v==='Si'){ if(actCompList.length===0) e.push('Agrega al menos una actividad'); actCompList.forEach((p,i)=>{ if(!(p.competidor||'').trim()) e.push('Competidor de la actividad '+(i+1)); if(!p.tipo) e.push('Tipo de la actividad '+(i+1)); if(!(p.descripcion||'').trim()) e.push('Descripción de la actividad '+(i+1)); }); } }
-  if(id==='leads'){ leadsList.forEach((p,i)=>{ const t=(p.telefono||'').replace(/\D/g,''); if(!(p.negocio||'').trim()) e.push('Nombre del negocio '+(i+1)); if(!(p.encargado||'').trim()) e.push('Encargado del negocio '+(i+1)); if(t.length<7) e.push('Teléfono del encargado '+(i+1)+' (mínimo 7 dígitos)'); if(!emailValido((p.email||'').trim())) e.push('Email del encargado '+(i+1)+' no es válido'); }); }
+  if(id==='leads'){ leadsList.forEach((p,i)=>{ const t=(p.telefono||'').replace(/\D/g,''); if(!(p.negocio||'').trim()) e.push('Nombre del negocio '+(i+1)); if(!(p.encargado||'').trim()) e.push('Encargado del negocio '+(i+1)); if(t.length<7) e.push('Teléfono del encargado '+(i+1)+' (mínimo 7 dígitos)'); if(!emailValido((p.email||'').trim())) e.push('Email del encargado '+(i+1)+' no es válido'); if(!(p.interes||'').trim()) e.push('Interés / productos de interés del negocio '+(i+1)); }); }
   if(id==='invfinal'){ invFinalList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario final '+(i+1)); }); }
   if(id==='premios'){ premiosList.forEach((p,i)=>{ if(!p.tipo) e.push('Obsequio '+(i+1)+' (Kit 1, Kit 2 o Recipiente)'); if(!p.cantidad||p.cantidad<1) e.push('Cantidad del obsequio '+(i+1)); }); }
   if(id==='inventarios'){ inventarioList.forEach((p,i)=>{ if(!p.sku) e.push('SKU inventario '+(i+1)); }); }
@@ -1932,7 +1933,7 @@ function recolectarGestion(){
     inventarioFinal: invFinalList.map(p=>({id:p.id,categoria:p.categoria,sku:p.sku,cantidad:p.cantidad})),
     competenciaActividad: (document.querySelector('input[name="hayActComp"]:checked')||{}).value||'',
     actividadCompetencia: ((document.querySelector('input[name="hayActComp"]:checked')||{}).value==='Si') ? actCompList.map(p=>({id:p.id,competidor:(p.competidor||'').trim(),tipo:p.tipo,descripcion:(p.descripcion||'').trim(),precio:(p.precio||'').trim(),foto:p.foto||'',fotoURL:p.fotoURL||''})) : [],
-    leadsNegocios: leadsList.map(p=>({id:p.id,negocio:(p.negocio||'').trim(),encargado:(p.encargado||'').trim(),telefono:(p.telefono||'').trim(),email:(p.email||'').trim()})),
+    leadsNegocios: leadsList.map(p=>({id:p.id,negocio:(p.negocio||'').trim(),encargado:(p.encargado||'').trim(),telefono:(p.telefono||'').trim(),email:(p.email||'').trim(),interes:(p.interes||'').trim()})),
     premiosEntregados: premiosList.map(p=>({id:p.id,tipo:p.tipo,cantidad:p.cantidad,contenido:descPremio(p.tipo)})),
     kit1Entregados: premiosList.length ? totalPremios('Kit 1') : '',
     kit2Entregados: premiosList.length ? totalPremios('Kit 2') : '',
@@ -2031,7 +2032,7 @@ function generarTextoGestion(){
   if(muestrasList.length){ t+='\n🧪 *MUESTRAS*\n'; muestrasList.forEach(m=>{ t+='   • '+(m.nombre||'-')+(m.categoria?' ['+m.categoria+']':'')+'  _x'+(m.cantidad||0)+'_\n'; }); }
   if(invFinalList.length){ t+='\n📦 *INVENTARIO FINAL*\n'; invFinalList.forEach(p=>{ t+='   • '+(p.sku||'-')+'  _'+(p.cantidad||0)+' und_\n'; }); }
   if((document.querySelector('input[name="hayActComp"]:checked')||{}).value==='Si' && actCompList.length){ t+='\n🕵️ *COMPETENCIA*\n'; actCompList.forEach(p=>{ t+='   • '+(p.competidor||'-')+' ('+(p.tipo||'-')+')'+(p.precio?' '+p.precio:'')+': '+(p.descripcion||'-')+'\n'; }); }
-  if(leadsList.length){ t+='\n🤝 *LEADS*\n'; leadsList.forEach(p=>{ t+='   • '+(p.negocio||'-')+' — '+(p.encargado||'-')+' · '+(p.telefono||'-')+(p.email?' · '+p.email:'')+'\n'; }); }
+  if(leadsList.length){ t+='\n🤝 *LEADS*\n'; leadsList.forEach(p=>{ t+='   • '+(p.negocio||'-')+' — '+(p.encargado||'-')+' · '+(p.telefono||'-')+(p.email?' · '+p.email:'')+(p.interes?'\n      Interés: '+p.interes:'')+'\n'; }); }
   if(premiosList.length){ t+='\n🎁 *OBSEQUIOS*\n'; premiosList.forEach(p=>{ t+='   • '+(p.tipo||'-')+(descPremio(p.tipo)?' ('+descPremio(p.tipo)+')':'')+'  _x'+(p.cantidad||0)+'_\n'; }); }
   if(val('proximaVisita')) t+='\n📅 Próxima visita: '+val('proximaVisita')+'\n';
   if(val('observacionesGenerales')) t+='📝 '+val('observacionesGenerales')+'\n';
